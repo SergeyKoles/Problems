@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class SegmentsAndPoints4_1 {
 
@@ -18,9 +19,6 @@ public class SegmentsAndPoints4_1 {
     SegmentsAndPoints4_1 sp = new SegmentsAndPoints4_1();
     sp.init();
     sp.pointsCounter();
-
-    System.out.println(sp.segments.values().toString());
-    System.out.println(sp.points.toString());
   }
 
   private void pointsCounter() {
@@ -30,7 +28,7 @@ public class SegmentsAndPoints4_1 {
     Point p = null;
     for (int i = 0; i < points.size(); i++) {
       p = points.get(i);
-      if (p.side.equals("l"))
+      if ("l".equals(p.side))
         stack.push(segments.get(p.segNum));
       else {
         if (!segments.get(p.segNum).isCovered){
@@ -45,8 +43,9 @@ public class SegmentsAndPoints4_1 {
     }
 
     System.out.println(count);
-    System.out.println(result.toString());
-//    result.forEach(System.out::print);
+    System.out.println(result.stream()
+        .map(String::valueOf)
+        .collect(Collectors.joining(" ")));
   }
 
   private void init() {
@@ -103,7 +102,7 @@ public class SegmentsAndPoints4_1 {
     public int compareTo(Point o) {
       int res = this.x.compareTo(o.x);
       if (res == 0) {
-        return this.side.equals("l") ? -1 : 1;
+        return "l".equals(this.side) ? -1 : 1;
       }
       return res;
     }
