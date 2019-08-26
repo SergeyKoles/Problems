@@ -19,7 +19,19 @@ import java.util.Arrays;
  */
 
 public class MergeSortedArray {
-
+//  merge(new int[]{1, 2, 3, 0, 0, 0}, 3, new int[]{2, 5, 6}, 3);
+//  merge(new int[]{1, 2, 3, 8, 0, 0, 0}, 4, new int[]{2, 5, 6}, 3);
+//  merge(new int[]{4, 5, 6, 8, 0, 0, 0}, 4, new int[]{1, 2, 3}, 3);
+//  merge(new int[]{7, 7, 7, 7, 0, 0, 0}, 4, new int[]{2, 5, 6}, 3);
+//  merge(new int[]{1, 3, 5, 7, 0, 0, 0}, 4, new int[]{2, 4, 6}, 3);
+//  merge(new int[]{1, 3, 5, 7, 0, 0, 0}, 4, new int[]{8, 8, 8}, 3);
+//  merge(new int[]{1, 3, 5, 7, 0, 0, 0}, 4, new int[]{4, 4, 4}, 3);
+//  merge(new int[]{1, 3, 5, 7, 0, 0, 0}, 4, new int[]{6, 6, 6}, 3);
+//  merge(new int[]{1, 1}, 2, new int[]{}, 0);
+//  merge(new int[]{1}, 1, new int[]{}, 0);
+//  merge(new int[]{1, 0}, 1, new int[]{2}, 1);
+//  merge(new int[]{0}, 0, new int[]{1}, 1);
+//  merge(new int[]{0, 0, 0, 0, 0}, 0, new int[]{1, 2, 3, 4, 5}, 5);
 
   public static void main(String[] args) {
     int[] nums1 = {1,2,3,0,0,0};
