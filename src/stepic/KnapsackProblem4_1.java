@@ -38,9 +38,8 @@ public class KnapsackProblem4_1 {
       if (item.wi <= totalW) {
         maxSum += item.ci;
         totalW -= item.wi;
-      } else if (totalW != 0) {
-        double restW = item.wi - totalW;
-        maxSum += (restW * item.val);
+      } else if (totalW != 0.0) {
+        maxSum += (totalW * item.val);
         break;
       }
     }
