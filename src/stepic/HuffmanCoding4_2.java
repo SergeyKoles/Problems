@@ -47,7 +47,6 @@ public class HuffmanCoding4_2 {
     System.out.println(cod.dictionary.size() + " " + lengthOfEncodedString);
     cod.dictionary.forEach((key, value) -> System.out.println(key + ": " + value));
     System.out.println(encodedStr);
-
   }
 
   public String encode(String s) {
@@ -61,45 +60,59 @@ public class HuffmanCoding4_2 {
     StringBuilder sb = new StringBuilder();
     while (true) {
       Map.Entry<Integer, TreeSet<String>> entry;
-      if (sortedByValue.size() == 2) {
-        if (sortedByValue.firstEntry().getValue().size() > 2) {
-          entry = sortedByValue.firstEntry();
-        } else if (sortedByValue.lastEntry().getValue().size() > 2) {
-          entry = sortedByValue.lastEntry();
-        } else
-          break;
-      }else
+      if (sortedByValue.size() == 1) {
         entry = sortedByValue.firstEntry();
-        TreeSet<String> val = entry.getValue();
-        Integer key = entry.getKey();
-        if (val.size() == 1) {
-          // get the lowest value of the entry
-          sb.append(val.first());
-          // remove entry because it's empty now
-          sortedByValue.remove(key);
-          // get the second lowest entry
-          entry = sortedByValue.firstEntry();
-          val = entry.getValue();
-          sb.append(val.pollFirst());
-          Integer newKey = key + entry.getKey();
-          if (val.isEmpty())
-            sortedByValue.remove(entry.getKey());
-          sortedByValue.computeIfAbsent(newKey, k -> new TreeSet<>()).add(sb.toString());
-          sb.setLength(0);
-        } else if (val.size() > 1) {
-          sb.append(val.pollFirst());
-          sb.append(val.pollFirst());
-          sortedByValue.computeIfAbsent(key * 2, k -> new TreeSet<>()).add(sb.toString());
-          if (val.isEmpty()) {
-            sortedByValue.remove(key);
-          }
-          sb.setLength(0);
+        if (entry.getValue().size() == 1) {
+          dictionary.put(entry.getValue().first().charAt(0), "0");
+          return generateEncodedString(s);
+        }else if (entry.getValue().size() == 2){
+          generateDictionary(entry.getValue().first(), 0);
+          generateDictionary(entry.getValue().last(), 1);
+          break;
         }
+      }else if (sortedByValue.size() == 2) {
+        if (sortedByValue.firstEntry().getValue().size() > 1) {
+          entry = sortedByValue.firstEntry();
+        } else if (sortedByValue.lastEntry().getValue().size() > 1) {
+          entry = sortedByValue.lastEntry();
+        } else {
+          generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 0);
+          generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 1);
+          break;
+        }
+      } else {
+        entry = sortedByValue.firstEntry();
+      }
+      TreeSet<String> val = entry.getValue();
+      Integer key = entry.getKey();
+      if (val.size() == 1) {
+        // get the lowest value of the entry
+        sb.append(val.first());
+        // remove entry because it's empty now
+        sortedByValue.remove(key);
+        // get the second lowest entry
+        entry = sortedByValue.firstEntry();
+        val = entry.getValue();
+        sb.append(val.pollFirst());
+        Integer newKey = key + entry.getKey();
+        if (val.isEmpty()) {
+          sortedByValue.remove(entry.getKey());
+        }
+        sortedByValue.computeIfAbsent(newKey, k -> new TreeSet<>()).add(sb.toString());
+        sb.setLength(0);
+      } else if (val.size() > 1) {
+        sb.append(val.pollFirst());
+        sb.append(val.pollFirst());
+        sortedByValue.computeIfAbsent(key * 2, k -> new TreeSet<>()).add(sb.toString());
+        if (val.isEmpty()) {
+          sortedByValue.remove(key);
+        }
+        sb.setLength(0);
+      }
 
     }
-    sortedByValue.forEach((key, value) -> System.out.println(key + ": " + value));
-    generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 0);
-    generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 1);
+//    sortedByValue.forEach((key, value) -> System.out.println(key + ": " + value));
+
 
 //    System.out.println(sb.toString());
     return generateEncodedString(s);
