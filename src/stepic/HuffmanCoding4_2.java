@@ -1,9 +1,9 @@
 package stepic;
 
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * По данной непустой строке s длины не более 10^4, состоящей из строчных букв латинского алфавита, постройте оптимальный беспрефиксный код.
@@ -30,11 +30,9 @@ import java.util.TreeSet;
  */
 //zzzzaaazzzaattttrufffklllllq
 public class HuffmanCoding4_2 {
+
   private Map<Character, Integer> table = new TreeMap<>();
   private Map<Character, String> dictionary = new TreeMap<>();
-  private TreeMap<Integer, TreeSet<String>> sortedByValue = new TreeMap<>();
-  private int numOfLeters;
-
 
   public static void main(String[] args) {
     HuffmanCoding4_2 cod = new HuffmanCoding4_2();
@@ -50,71 +48,33 @@ public class HuffmanCoding4_2 {
   }
 
   public String encode(String s) {
+    PriorityQueue<Simbol> queue = new PriorityQueue<>(
+        (o1, o2) -> o2.frequency.compareTo(o1.frequency));
+
     for (int i = 0; i < s.length(); i++) {
       table.merge(s.charAt(i), 1, Integer::sum);
     }
-    numOfLeters = table.size();
-    table.forEach((key, value) -> sortedByValue.computeIfAbsent(value, k -> new TreeSet<>()).add(key.toString()));
-//    sortedByValue.forEach((key, value) -> System.out.println(key + ": " + value));
+    table.forEach((k, v) -> queue.add(new Simbol(k, -v)));
 
-    StringBuilder sb = new StringBuilder();
-    while (true) {
-      Map.Entry<Integer, TreeSet<String>> entry;
-      if (sortedByValue.size() == 1) {
-        entry = sortedByValue.firstEntry();
-        if (entry.getValue().size() == 1) {
-          dictionary.put(entry.getValue().first().charAt(0), "0");
-          return generateEncodedString(s);
-        }else if (entry.getValue().size() == 2){
-          generateDictionary(entry.getValue().first(), 0);
-          generateDictionary(entry.getValue().last(), 1);
-          break;
-        }
-      }else if (sortedByValue.size() == 2) {
-        if (sortedByValue.firstEntry().getValue().size() > 1) {
-          entry = sortedByValue.firstEntry();
-        } else if (sortedByValue.lastEntry().getValue().size() > 1) {
-          entry = sortedByValue.lastEntry();
-        } else {
-          generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 0);
-          generateDictionary(sortedByValue.pollFirstEntry().getValue().first(), 1);
-          break;
-        }
-      } else {
-        entry = sortedByValue.firstEntry();
-      }
-      TreeSet<String> val = entry.getValue();
-      Integer key = entry.getKey();
-      if (val.size() == 1) {
-        // get the lowest value of the entry
-        sb.append(val.first());
-        // remove entry because it's empty now
-        sortedByValue.remove(key);
-        // get the second lowest entry
-        entry = sortedByValue.firstEntry();
-        val = entry.getValue();
-        sb.append(val.pollFirst());
-        Integer newKey = key + entry.getKey();
-        if (val.isEmpty()) {
-          sortedByValue.remove(entry.getKey());
-        }
-        sortedByValue.computeIfAbsent(newKey, k -> new TreeSet<>()).add(sb.toString());
-        sb.setLength(0);
-      } else if (val.size() > 1) {
-        sb.append(val.pollFirst());
-        sb.append(val.pollFirst());
-        sortedByValue.computeIfAbsent(key * 2, k -> new TreeSet<>()).add(sb.toString());
-        if (val.isEmpty()) {
-          sortedByValue.remove(key);
-        }
-        sb.setLength(0);
-      }
-
+    if (queue.size() == 1) {
+      dictionary.put(s.charAt(0), "0");
+      return generateEncodedString(s);
     }
-//    sortedByValue.forEach((key, value) -> System.out.println(key + ": " + value));
-
-
-//    System.out.println(sb.toString());
+    StringBuilder sb = new StringBuilder();
+    while (queue.size() > 2) {
+      Simbol s1 = queue.poll();
+      Simbol s2 = queue.poll();
+      sb.append(s1.ch);
+      sb.append(s2.ch);
+      queue.offer(new Simbol(sb.toString(), s1.frequency + s2.frequency));
+      sb.setLength(0);
+      if (queue.size() == 1) {
+        generateDictionary(queue.poll().ch, 0);
+        return generateEncodedString(s);
+      }
+    }
+    generateDictionary(queue.poll().ch, 0);
+    generateDictionary(queue.poll().ch, 1);
     return generateEncodedString(s);
   }
 
@@ -143,11 +103,25 @@ public class HuffmanCoding4_2 {
     }
     return sb.toString();
   }
+
+  private class Simbol {
+
+    private String ch;
+    private Integer frequency = 0;
+
+    public Simbol(char ch, Integer frequency) {
+      this.ch = String.valueOf(ch);
+      this.frequency = frequency;
+    }
+
+    public Simbol(String str, Integer frequency) {
+      this.ch = str;
+      this.frequency = frequency;
+    }
+
+    @Override
+    public String toString() {
+      return ch + " : " + frequency;
+    }
+  }
 }
-
-
-//    LinkedHashMap<Character, Integer> sortByValueTable   = table.entrySet().stream()
-//            .sorted(Map.Entry.<Character, Integer>comparingByValue()
-//                    .reversed())
-//            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (v1, v2) -> v2, LinkedHashMap::new));
-//    sortByValueTable.forEach((key, value) -> System.out.println(key + ": " + value));
