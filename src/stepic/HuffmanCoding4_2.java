@@ -29,6 +29,8 @@ import java.util.TreeMap;
  * 01001100100111
  */
 //zzzzaaazzzaattttrufffklllllq
+// accepted  6 20
+// bbbeeeepp  oor!
 public class HuffmanCoding4_2 {
 
   private Map<Character, Integer> table = new TreeMap<>();
@@ -64,8 +66,14 @@ public class HuffmanCoding4_2 {
     while (queue.size() > 2) {
       Simbol s1 = queue.poll();
       Simbol s2 = queue.poll();
-      sb.append(s1.ch);
-      sb.append(s2.ch);
+      // the first has to be the shortest tree
+      if(s1.ch.length() < s2.ch.length()){
+        sb.append(s1.ch);
+        sb.append(s2.ch);
+      }else{
+        sb.append(s2.ch);
+        sb.append(s1.ch);
+      }
       queue.offer(new Simbol(sb.toString(), s1.frequency + s2.frequency));
       sb.setLength(0);
       if (queue.size() == 1) {
