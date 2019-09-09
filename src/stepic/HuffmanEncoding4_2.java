@@ -31,13 +31,13 @@ import java.util.TreeMap;
 //zzzzaaazzzaattttrufffklllllq
 // accepted  6 20
 // bbbeeeepp  oor!
-public class HuffmanCoding4_2 {
+public class HuffmanEncoding4_2 {
 
   private Map<Character, Integer> table = new TreeMap<>();
   private Map<Character, String> dictionary = new TreeMap<>();
 
   public static void main(String[] args) {
-    HuffmanCoding4_2 cod = new HuffmanCoding4_2();
+    HuffmanEncoding4_2 cod = new HuffmanEncoding4_2();
 
     Scanner in = new Scanner(System.in);
     String s = in.next();
