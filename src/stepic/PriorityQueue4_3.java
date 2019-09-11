@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class PriorityQueue4_3 {
 
@@ -30,17 +31,15 @@ public class PriorityQueue4_3 {
     PriorityQueue4_3 pq = new PriorityQueue4_3();
     pq.a.add(Integer.MAX_VALUE);
 
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
 
-    int m = 0;
-    try {
-      m = Integer.parseInt(br.readLine());
+    int m = Integer.parseInt(br.readLine());
 
-      String oper;
+      StringTokenizer oper;
       while (m-- > 0) {
-        oper = br.readLine();
-        if (oper.startsWith(INSERT)) {
-          pq.insert(Integer.parseInt(oper.split(" ")[1].trim()));
+        oper = new StringTokenizer(br.readLine());
+        if (oper.nextToken().equals(INSERT)) {
+          pq.insert(Integer.parseInt(oper.nextToken()));
         } else {
           System.out.println(pq.extractMax());
         }
