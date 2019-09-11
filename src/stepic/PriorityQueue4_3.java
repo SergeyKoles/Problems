@@ -1,6 +1,5 @@
 package stepic;
 
-
 /**
    Insert
    200
@@ -16,24 +15,22 @@ package stepic;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 public class PriorityQueue4_3 {
 
-  private List<Integer> a = new ArrayList<>();
+  private int[] a;
   private static final String INSERT = "Insert";
   private int n = 0;
 
   public static void main(String[] args) {
 
     PriorityQueue4_3 pq = new PriorityQueue4_3();
-    pq.a.add(Integer.MAX_VALUE);
 
-    try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))){
+    try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
 
-    int m = Integer.parseInt(br.readLine());
+      int m = Integer.parseInt(br.readLine());
+      pq.a = new int[m];
 
       StringTokenizer oper;
       while (m-- > 0) {
@@ -51,14 +48,13 @@ public class PriorityQueue4_3 {
 
   public void insert(int v) {
     n++;
-    a.add(n, v);
+    a[n] = v;
     siftUp(n);
   }
 
   public int extractMax() {
-    int e = a.get(n);
-    int max = a.remove(1);
-    a.add(1, e);
+    int max = a[1];
+    a[1] = a[n];
     n--;
     siftDown(1);
     return max;
@@ -68,10 +64,10 @@ public class PriorityQueue4_3 {
     int j;
     while ((2 * i) <= n) {
       j = i;
-      if (a.get(2 * i) > a.get(j)) {
+      if (a[2 * i] > a[j]) {
         j = 2 * j;
       }
-      if ((2 * i + 1) <= n && (a.get(2 * i + 1) > a.get(j))) {
+      if ((2 * i + 1) <= n && (a[2 * i + 1] > a[j])) {
         j = 2 * i + 1;
       }
       if (j == i) {
@@ -84,25 +80,21 @@ public class PriorityQueue4_3 {
   }
 
   private void siftUp(int i) {
-    while (i > 1 && a.get(i / 2) < a.get(i)) {
+    while (i > 1 && a[i / 2] < a[i]) {
       exch(i);
       i = i / 2;
     }
   }
 
   private void exch(int i) {
-    int tmp = a.remove(i);
-    a.add(i, a.get(i / 2));
-    a.remove(i / 2);
-    a.add(i / 2, tmp);
+    int tmp = a[i];
+    a[i] = a[i / 2];
+    a[i / 2] = tmp;
   }
 
   private void exch(int i, int j) {
-    int tmp = a.get(i);
-    int e = a.get(j);
-    a.remove(i);
-    a.add(i, e);
-    a.remove(j);
-    a.add(j, tmp);
+    int tmp = a[i];
+    a[i] = a[j];
+    a[j] = tmp;
   }
 }
