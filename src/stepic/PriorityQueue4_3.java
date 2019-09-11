@@ -13,9 +13,11 @@ package stepic;
    ExtractMax
  */
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class PriorityQueue4_3 {
 
@@ -28,26 +30,33 @@ public class PriorityQueue4_3 {
     PriorityQueue4_3 pq = new PriorityQueue4_3();
     pq.a.add(Integer.MAX_VALUE);
 
-    Scanner in = new Scanner(System.in);
-    int m = in.nextInt();
-    String oper;
-    while (m-- > 0) {
-      oper = in.next();
-      if (oper.startsWith(INSERT)) {
-        pq.insert(in.nextInt());
-      } else {
-        System.out.println(pq.extractMax());
+    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+    int m = 0;
+    try {
+      m = Integer.parseInt(br.readLine());
+
+      String oper;
+      while (m-- > 0) {
+        oper = br.readLine();
+        if (oper.startsWith(INSERT)) {
+          pq.insert(Integer.parseInt(oper.split(" ")[1].trim()));
+        } else {
+          System.out.println(pq.extractMax());
+        }
       }
+    } catch (IOException e) {
+      e.printStackTrace();
     }
   }
 
-  private void insert(int v) {
+  public void insert(int v) {
     n++;
     a.add(n, v);
     siftUp(n);
   }
 
-  private int extractMax() {
+  public int extractMax() {
     int e = a.get(n);
     int max = a.remove(1);
     a.add(1, e);
