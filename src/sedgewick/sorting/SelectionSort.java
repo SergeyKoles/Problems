@@ -1,5 +1,10 @@
 package sedgewick.sorting;
 
+/**
+ * Selection sort uses ~(N^2)/2 compares and N exchanges to sort an
+ * array of length N.
+ */
+
 public class SelectionSort extends Frame {
 
   public static long sort(Comparable[] a) { // Sort a[] into increasing order.
