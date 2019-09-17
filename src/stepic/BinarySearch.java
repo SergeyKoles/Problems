@@ -33,7 +33,27 @@ public class BinarySearch {
     return binarySearch(e, 0, n - 1, A);
   }
 
+  // like in java.util.Arrays.binarySearch
   private static int binarySearch(int e, int fromIndex, int toIndex, int[] array) {
+    int l = fromIndex;
+    int h = toIndex - 1;
+
+    while (l <= h) {
+      int mid = (fromIndex + toIndex) >>> 1;
+      int val = array[mid];
+      if (val < e)
+        l = mid + 1;
+
+      else if (val > e)
+        h = mid - 1;
+      else
+        return mid;
+    }
+    return -1;
+  }
+
+  // too slow
+  private static int binarySearchRecursion(int e, int fromIndex, int toIndex, int[] array) {
     if (fromIndex > toIndex) {
       return -1;
     }
@@ -42,7 +62,7 @@ public class BinarySearch {
       return index + 1;
     }
     return array[index] < e ?
-        binarySearch(e, fromIndex + 1, toIndex, array) :
-        binarySearch(e, fromIndex, toIndex - 1, array);
+            binarySearchRecursion(e, fromIndex + 1, toIndex, array) :
+            binarySearchRecursion(e, fromIndex, toIndex - 1, array);
   }
 }
