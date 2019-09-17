@@ -1,6 +1,6 @@
 package sedgewick.sorting.testData;
 
-import static sedgewick.sorting.Frame.FILE_NAME;
+import static sedgewick.sorting.Sort.FILE_NAME;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

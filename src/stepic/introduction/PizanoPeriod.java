@@ -1,4 +1,4 @@
-package stepic;
+package stepic.introduction;
 
 import java.util.Scanner;
 

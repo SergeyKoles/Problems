@@ -1,4 +1,4 @@
-package stepic;
+package stepic.greedyAlgorithm;
 
 import java.util.Map;
 import java.util.PriorityQueue;

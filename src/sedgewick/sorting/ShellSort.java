@@ -1,28 +1,25 @@
 package sedgewick.sorting;
 
-/**
- * Selection sort uses ~(N^2)/2 compares and N exchanges to sort an
- * array of length N.
- */
-
-public class SelectionSort extends Sort {
-
+public class ShellSort extends Sort {
   public static long sort(Comparable[] a) { // Sort a[] into increasing order.
     long start = System.currentTimeMillis();
-    int N = a.length; // array length
-    for (int i = 0; i < N; i++) { // Exchange a[i] with smallest entry in a[i+1...N).
-      int min = i; // index of minimal entr.
-      for (int j = i + 1; j < N; j++) {
-        if (less(a[j], a[min])) {
-          min = j;
+
+    int N = a.length;
+    int h = 1;
+    while (h < N / 3)
+      h = 3 * h + 1; // 1, 4, 13, 40, 121, 364, 1093, ...
+    while (h >= 1) { // h-sort the array
+      for (int i = h; i < N; i++) { // insert a[i] among a[i-h], a[i-2*h], a[i-3*h] ...
+        for (int j = i; j >= h && less(a[j], a[j - h]); j -= h) {
+          exch(a, j, j - h);
         }
       }
-      exch(a, i, min);
+      h = h / 3;
     }
+
     long finish = System.currentTimeMillis();
     return finish - start;
   }
-
 
   public static void main(String[] args) {
     String[] s = initArray("small");

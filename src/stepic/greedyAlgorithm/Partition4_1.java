@@ -1,4 +1,4 @@
-package stepic;
+package stepic.greedyAlgorithm;
 
 import java.util.ArrayList;
 import java.util.List;

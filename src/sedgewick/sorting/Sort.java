@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import sedgewick.sorting.testData.Generate;
 
-public abstract class Frame {
+public abstract class Sort {
 
   public static final String FILE_NAME = "src.sedgewick.sorting.testData.input.txt";
 

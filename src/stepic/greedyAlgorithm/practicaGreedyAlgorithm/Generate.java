@@ -1,4 +1,4 @@
-package stepic.practicaGreedyAlgorithm;
+package stepic.greedyAlgorithm.practicaGreedyAlgorithm;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;

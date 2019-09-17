@@ -1,4 +1,4 @@
-package stepic;
+package stepic.greedyAlgorithm;
 
 /**
    Insert

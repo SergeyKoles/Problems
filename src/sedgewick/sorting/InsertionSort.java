@@ -25,7 +25,7 @@ package sedgewick.sorting;
  * and 0 exchanges.
  */
 
-public class InsertionSort extends Frame {
+public class InsertionSort extends Sort {
 
   public static long sort(Comparable[] a) { // Sort a[] into increasing order.
     long start = System.currentTimeMillis();
