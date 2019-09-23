@@ -9,7 +9,7 @@ import sedgewick.sorting.testData.Generate;
 
 public abstract class Sort {
 
-  public static final String FILE_NAME = "src.sedgewick.sorting.testData.input.txt";
+  public static final String FILE_NAME = "src\\sedgewick\\sorting\\testData\\input.txt";
 
   static boolean less(Comparable v, Comparable w) {
     return v.compareTo(w) < 0;
