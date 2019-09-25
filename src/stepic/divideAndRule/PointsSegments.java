@@ -26,8 +26,9 @@ public class PointsSegments {
 
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-      int n = Integer.parseInt(br.readLine());
-      int m = Integer.parseInt(br.readLine());
+      String[] sizes = br.readLine().split(" ");
+      int n = Integer.parseInt(sizes[0]);
+      int m = Integer.parseInt(sizes[1]);
       Segment[] segments = new Segment[n];
       StringTokenizer st;
       for (int i = 0; i < n; i++) {
@@ -39,7 +40,7 @@ public class PointsSegments {
       st = new StringTokenizer(br.readLine());
       for (int i = 0; i < m; i++) {
         int p = Integer.parseInt(st.nextToken());
-        System.out.println();
+        System.out.print(segmentCounter(segments, p) + " ");
       }
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
@@ -48,7 +49,35 @@ public class PointsSegments {
 
   private static int segmentCounter(Segment[] s, int p) {
     int counter = 0;
+    partition(s, p);
+    int i = 0;
+    while (i < s.length && s[i].l <= p) {
+      if (s[i].r >= p)
+        counter++;
+      i++;
+    }
+
     return counter;
+  }
+
+  private static void partition(Segment[] s, int p) {
+    int l = 0;
+    int r = s.length - 1;
+    while (l <= r) {
+      while (l < s.length && s[l].l <= p) l++;
+      while (r >= 0 && s[r].l <= p) r--;
+      if (l <= r) {
+        swap(s, l, r);
+        l++;
+        r--;
+      }
+    }
+  }
+
+  private static void swap(Segment[] s, int l, int r) {
+    Segment tmp = s[l];
+    s[l] = s[r];
+    s[r] = tmp;
   }
 
   private static class Segment {
