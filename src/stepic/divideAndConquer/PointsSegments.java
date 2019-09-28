@@ -35,81 +35,64 @@ public class PointsSegments {
         st = new StringTokenizer(br.readLine());
         lp[i] = new Segment(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
       }
+      Segment[] rp = Arrays.copyOfRange(lp, 0, lp.length);
+
       quickSortLP(lp, 0, lp.length - 1);
+      quickSortRP(rp, 0, rp.length - 1);
 
       st = new StringTokenizer(br.readLine());
       for (int i = 0; i < m; i++) {
-        System.out.print(segmentCounter(lp, Integer.parseInt(st.nextToken())) + " ");
+        System.out.print(segmentCounter(lp, rp, Integer.parseInt(st.nextToken())) + " ");
       }
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private static int segmentCounter(Segment[] lp, int p) {
+  private static int segmentCounter(Segment[] lp, Segment[] rp, int p) {
     int indexL = searchL(lp, p);
 
     if (indexL > -1) {
-      Segment[] rp = Arrays.copyOfRange(lp, 0, indexL + 1);
-      quickSortRP(rp, 0, rp.length - 1);
       int indexR = searchR(rp, p);
       if (indexR > -1) {
-        return indexL - indexR + 1;
+        return indexL - indexR+1;
       }
     }
     return 0;
   }
 
+
+   //Sorts segment using 3-way quicksort.
   private static void quickSortLP(Segment[] s, int l, int r) {
     if (r <= l) return;
-    int j = partitionLP(s, l, r);
-    quickSortLP(s, l, j - 1);
-    quickSortLP(s, j + 1, r);
-  }
-
-  private static int partitionLP(Segment[] s, int l, int r) {
-    int i = l;
-    int j = r + 1;
-
+    int lt = l;
+    int gt = r;
     int pivot = s[l].l;
-    while (true) {
-      while (s[++i].l < pivot) {
-        if (i == r) break;
-      }
-      while (pivot < s[--j].l) {
-        if (j == l) break;
-      }
-      if (i >= j) break;
-      swap(s, i, j);
+    int i = l + 1;
+
+    while (i <= gt) {
+      if (pivot > s[i].l) swap(s, lt++, i++);
+      else if (pivot < s[i].l) swap(s, i, gt--);
+      else i++;
     }
-    swap(s, l, j);
-    return j;
+    quickSortLP(s, l, lt - 1);
+    quickSortLP(s, gt + 1, r);
   }
 
   private static void quickSortRP(Segment[] s, int l, int r) {
     if (r <= l) return;
-    int j = partitionRP(s, l, r);
-    quickSortRP(s, l, j - 1);
-    quickSortRP(s, j + 1, r);
-  }
-
-  private static int partitionRP(Segment[] s, int l, int r) {
-    int i = l;
-    int j = r + 1;
-
+    int lt = l;
+    int gt = r;
     int pivot = s[l].r;
-    while (true) {
-      while (s[++i].r < pivot) {
-        if (i == r) break;
-      }
-      while (pivot < s[--j].r) {
-        if (j == l) break;
-      }
-      if (i >= j) break;
-      swap(s, i, j);
+    int i = l + 1;
+
+    while (i <= gt) {
+      if (pivot > s[i].r) swap(s, lt++, i++);
+      else if (pivot < s[i].r) swap(s, i, gt--);
+      else i++;
     }
-    swap(s, l, j);
-    return j;
+    quickSortRP(s, l, lt - 1);
+    quickSortRP(s, gt + 1, r);
   }
 
   private static void swap(Segment[] s, int l, int r) {
