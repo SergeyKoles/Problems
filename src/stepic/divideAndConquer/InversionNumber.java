@@ -1,4 +1,4 @@
-package stepic.divideAndRule;
+package stepic.divideAndConquer;
 
 
 import java.io.BufferedReader;
