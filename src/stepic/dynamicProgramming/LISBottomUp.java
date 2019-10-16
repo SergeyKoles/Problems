@@ -43,8 +43,6 @@ public class LISBottomUp {
       }
     }
     int ans = 0;
-    System.out.println(Arrays.toString(A));
-    System.out.println(Arrays.toString(D));
     for (int i = 0; i < D.length; i++) {
       if (D[i] > ans)
         ans = D[i];
