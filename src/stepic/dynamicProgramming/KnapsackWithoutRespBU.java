@@ -38,15 +38,11 @@ public class KnapsackWithoutRespBU {
   private static int knapsackWithoutRespBU(int W, int[] C) {
     int[][] D = new int[W + 1][C.length + 1];
     for (int i = 0; i < C.length; i++) {
-      for (int w = 0; w < W; ) {
-        D[++w][i + 1] = D[w][i];
-        if (C[i] <= W) {
-          int wi = D[W - C[i]][i] + C[i];
-          if (wi <= w) {
-            D[w][i + 1] = Math.max(D[w][i + 1], wi);
-          } else if (C[i] <= w) {
-            D[w][i + 1] = Math.max(D[w][i + 1], C[i]);
-          }
+      for (int w = 0; w < W; w++) {
+        if (C[i] > w + 1) {
+          D[w + 1][i + 1] = D[w + 1][i];
+        } else {
+          D[w + 1][i + 1] = Math.max(D[w + 1][i], D[w + 1 - C[i]][i] + C[i]);
         }
       }
     }
