@@ -63,18 +63,20 @@ public class Ladder {
         }
         break;
       }
-    }
-    if (A[i] > 0) {
-      sum += A[i];
-    } else {
-      i = max(i, i - 1, i - 2);
-      sum += A[i];
+      if (A[i] > 0) {
+        sum += A[i];
+      } else {
+        i = max(i, i - 1, i - 2, i - 3);
+        sum += A[i];
+      }
     }
 
     System.out.println(sum);
   }
 
   private static int max(int i1, int i2) {
+    if (i2 < 0)
+      return i1;
     return A[i1] > A[i2] ? i1 : i2;
   }
 
@@ -84,7 +86,11 @@ public class Ladder {
     if ((A[i1] + A[i3]) > A[i2])
       return i1;
     else return i2;
-//    return A[i1] > A[i2] ? i1 : i2;
+  }
+
+  private static int max(int i1, int i2, int i3, int i4) {
+    if (i4 < 0) return max(i1, i2, i3);
+    return (A[i1] + A[i3] > A[i2] + A[i4]) ? i1 : i2;
   }
 
 }
