@@ -46,10 +46,54 @@ public class Ladder {
       for (int i = 0; i < n; i++) {
         A[i] = Integer.parseInt(st.nextToken());
       }
-      climbLadder(A);
+//      climbLadder(A);
+//      climbLadder2(A);
+      climbLadder3(A);
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
+  }
+
+  private static void climbLadder3(int[] A) {
+    int i = 0;
+    sum += A[--n];
+    while (i++ < n) {
+      if (A[i] >= 0)
+        sum += A[i];
+      else {
+        i = max(i, i + 1, i + 2, i + 3);
+        sum += A[i];
+      }
+    }
+    System.out.println(sum);
+  }
+
+  private static void climbLadder2(int[] A) {
+    int i = 2;
+    sum += A[--n];
+    while (i < n) {
+      if (A[i - 2] < 0 && A[i - 1] < 0) {
+        if (A[i - 2] + A[i] > A[i - 1] + A[i + 1]) {
+          if (A[i - 2] > A[i - 1]) {
+            sum += A[i - 2];
+            i++;
+          } else {
+            sum += A[i - 1];
+            i += 2;
+          }
+        } else {
+          sum += A[i - 1];
+          i += 2;
+        }
+      } else if (A[i - 2] > 0) {
+        sum += A[i - 2];
+        i++;
+      } else if (A[i - 1] > 0) {
+        sum += A[i - 1];
+        i += 2;
+      }
+    }
+    System.out.println(sum);
   }
 
   private static void climbLadder(int[] A) {
