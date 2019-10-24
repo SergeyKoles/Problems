@@ -62,7 +62,7 @@ public class Ladder {
         sum += A[i];
       else {
         i = max(i, i + 1, i + 2, i + 3);
-        sum += A[i];
+//        sum += A[i];
       }
     }
     System.out.println(sum);
@@ -119,11 +119,14 @@ public class Ladder {
 
   private static int max(int i1, int i2) {
     if (i2 > n - 1) {
+      if (A[i1] > 0) sum += A[i1];
       return i1;
     }
     if (A[i1] > A[i2]) {
+      sum += A[i1];
       return i1;
     } else {
+      sum += A[i2];
       return i2;
     }
   }
@@ -132,8 +135,10 @@ public class Ladder {
     if (i3 > n - 1)
       return max(i1, i2);
     if ((A[i1] + A[i3]) > A[i2]) {
-      return i1;
+      sum += A[i1];
+      return i3;
     } else {
+      sum += A[i2];
       return i2;
     }
   }
@@ -141,14 +146,35 @@ public class Ladder {
   private static int max(int i1, int i2, int i3, int i4) {
     if (i4 > n - 1) return max(i1, i2, i3);
 
+    if (A[i2] > 0) {
+      sum += A[i2];
+      return i2;
+    }
+    if (A[i3] > 0) {
+      sum += A[max(i1, i2)];
+      sum += A[i3];
+      return i3;
+    }
+    if (A[i4] > 0) {
+      sum += A[max(i1, i2, i3)];
+      sum += A[i4];
+      return i4;
+    }
+
     int st1 = max(i1, i2);
     int st2 = max(i3, i4);
     if (st1 + 2 >= st2) {
-      return st1;
+      sum += A[st1];
+      sum += A[st2];
+      return st2;
     } else if (A[i1] + A[i3] > A[i2] + A[i4]) {
+      sum += A[st1];
+      sum += A[--st2];
       return st1;
     } else {
-      return ++st1;
+      sum += A[++st1];
+      sum += A[st2];
+      return st1;
     }
   }
 }
