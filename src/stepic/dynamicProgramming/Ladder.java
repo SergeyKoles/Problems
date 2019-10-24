@@ -46,65 +46,17 @@ public class Ladder {
       for (int i = 0; i < n; i++) {
         A[i] = Integer.parseInt(st.nextToken());
       }
-//      climbLadder(A);
-//      climbLadder2(A);
-      climbLadder3(A);
+      climbLadder(A);
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private static void climbLadder3(int[] A) {
-    int i = 0;
-    sum += A[--n];
-    while (i++ < n) {
-      if (A[i] >= 0)
-        sum += A[i];
-      else {
-        i = max(i, i + 1, i + 2, i + 3);
-        sum += A[i];
-      }
-    }
-    System.out.println(sum);
-  }
-
-  private static void climbLadder2(int[] A) {
-    int i = 2;
-    sum += A[--n];
-    while (i < n) {
-      if (A[i - 2] < 0 && A[i - 1] < 0) {
-        if (A[i - 2] + A[i] > A[i - 1] + A[i + 1]) {
-          if (A[i - 2] > A[i - 1]) {
-            sum += A[i - 2];
-            i++;
-          } else {
-            sum += A[i - 1];
-            i += 2;
-          }
-        } else {
-          sum += A[i - 1];
-          i += 2;
-        }
-      } else if (A[i - 2] > 0) {
-        sum += A[i - 2];
-        i++;
-      } else if (A[i - 1] > 0) {
-        sum += A[i - 1];
-        i += 2;
-      }
-    }
-    System.out.println(sum);
-  }
-
   private static void climbLadder(int[] A) {
     int i = 0;
-    sum += A[--n];
     while (i < n) {
       if (i + 1 == n) {
-        if (A[i] > 0) {
-          sum += A[i];
-          break;
-        }
+        sum += A[i];
         break;
       }
       if (A[i] >= 0) {
@@ -118,8 +70,11 @@ public class Ladder {
   }
 
   private static int max(int i1, int i2) {
-    if (i2 > n - 1) {
-      return i1;
+    if (i2 >= n - 1) {
+      return i2;
+    }
+    if (A[i2] >= 0) {
+      return i2;
     }
     if (A[i1] > A[i2]) {
       return i1;
@@ -129,8 +84,14 @@ public class Ladder {
   }
 
   private static int max(int i1, int i2, int i3) {
-    if (i3 > n - 1)
+    if (i3 >= n - 1)
       return max(i1, i2);
+    if (A[i2] >= 0) {
+      return i2;
+    }
+    if (A[i3] >= 0) {
+      return max(i1, i2);
+    }
     if ((A[i1] + A[i3]) > A[i2]) {
       return i1;
     } else {
@@ -139,7 +100,16 @@ public class Ladder {
   }
 
   private static int max(int i1, int i2, int i3, int i4) {
-    if (i4 > n - 1) return max(i1, i2, i3);
+    if (i4 >= n - 1) return max(i1, i2, i3);
+    if (A[i2] >= 0) {
+      return i2;
+    }
+    if (A[i3] >= 0) {
+      return max(i1, i2);
+    }
+    if (A[i4] >= 0) {
+      return max(i1, i2, i3);
+    }
 
     int st1 = max(i1, i2);
     int st2 = max(i3, i4);
