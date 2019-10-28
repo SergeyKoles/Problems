@@ -3,10 +3,12 @@ package stepic.dynamicProgramming;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * У вас есть примитивный калькулятор, который умеет выполнять всего три операции с текущим числом x: заменить x на 2x, 3x или x+1.
- * По данному целому числу 1<=n<=105 определите минимальное число операций k, необходимое, чтобы получить n из 1.
+ * По данному целому числу 1<=n<=10^5 определите минимальное число операций k, необходимое, чтобы получить n из 1.
  * Выведите k и последовательность промежуточных чисел.
  *
  * Sample Input 1:
@@ -35,9 +37,19 @@ public class Calculator {
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
-
+      List<Integer> seq = foundMinNumberOfMathOperation(n);
+      System.out.println(seq.size());
+      seq.forEach(r -> System.out.print(r + " "));
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
+  }
+
+  private static List<Integer> foundMinNumberOfMathOperation(int n) {
+    ArrayList<Integer> seq = new ArrayList<>();
+
+
+
+    return seq;
   }
 }
