@@ -1,8 +1,11 @@
 package stepic.dynamicProgramming;
 
+import org.junit.Test;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
@@ -52,6 +55,23 @@ public class Ladder {
     }
   }
 
+  @Test
+  public void test() {
+    test(new int[]{1, 1, -2, -4, -6, 2, 2}, 2);
+    test(new int[]{-64, -16, -13, -9, -48}, -73);
+    test(new int[]{-2, -16, -13, -9, -48}, -63);
+    test(new int[]{-60, -37, -22, -14, -7, -4, -2, -1}, -56);
+    test(new int[]{-7, -6, -5, -4, -3, -2, -1}, -13);
+  }
+
+  private void test(int[] L, int expect) {
+    A = L;
+    n = A.length;
+    sum = 0;
+    climbLadder(A);
+    System.out.println(expect == sum ? " + " : " - " + Arrays.toString(A) + " #failed, expect: " + expect + ", got: " + sum);
+  }
+
   private static void climbLadder(int[] A) {
     int i = 0;
     while (i < n) {
@@ -66,7 +86,7 @@ public class Ladder {
         sum += A[i++];
       }
     }
-    System.out.println(sum);
+    System.out.print(sum);
   }
 
   private static int max(int i1, int i2) {
@@ -94,6 +114,8 @@ public class Ladder {
     }
     if ((A[i1] + A[i3]) > A[i2]) {
       return i1;
+    } else if ((A[i1] + A[i3]) == A[i2]) {
+      return i1;
     } else {
       return i2;
     }
@@ -117,25 +139,10 @@ public class Ladder {
       return st1;
     } else if (A[i1] + A[i3] > A[i2] + A[i4]) {
       return st1;
+    } else if (A[i1] + A[i3] == A[i2] + A[i4]) {
+      return max(i1, i2);
     } else {
       return ++st1;
     }
   }
 }
-/*
-7
-1 1 -2 -4 -6 2 2
-(2)
-5
--64 -16 -13 -9 -48
-(-73)
-5
--2 -16 -13 -9 -48
-(-63)
-8
--60 -37 -22 -14 -7 -4 -2 -1
-(-56)
-7
--7 -6 -5 -4 -3 -2 -1
-(-13)
- */
