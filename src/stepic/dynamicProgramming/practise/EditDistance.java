@@ -1,6 +1,5 @@
 package stepic.dynamicProgramming.practise;
 
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class EditDistance {
@@ -22,16 +21,37 @@ public class EditDistance {
   }
 
   private static int editDistance() {
+
+    boolean[][] moveFirst = new boolean[first.length() + 1][second.length() + 1];
+    boolean[][] moveSecond = new boolean[first.length() + 1][second.length() + 1];
+
     for (int n = 0; n <= first.length(); n++) {
       for (int m = 0; m <= second.length(); m++) {
         if (n == 0 && m == 0) d[n][m] = 0;
-        else if (n == 0) d[n][m] = m;
-        else if (m == 0) d[n][m] = n;
-        else {
+        else if (n == 0) {
+          moveSecond[n][m] = true;
+          d[n][m] = m;
+        } else if (m == 0) {
+          moveFirst[n][m] = true;
+          d[n][m] = n;
+        } else {
           int res1 = d[n][m - 1] + 1;
           int res2 = d[n - 1][m] + 1;
           int res3 = d[n - 1][m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
-          int result = Math.min(Math.min(res1, res2), res3);
+          int result;
+          if (res1 <= res2 && res1 <= res3) {
+            moveSecond[n][m] = true;
+            result=res1;
+          } else {
+            if (res2 <= res3) {
+              moveFirst[n][m] = true;
+              result=res2;
+            } else {
+              moveFirst[n][m] = true;
+              moveSecond[n][m] = true;
+              result=res3;
+            }
+          }
           d[n][m] = result;
         }
       }
@@ -43,34 +63,15 @@ public class EditDistance {
     StringBuilder secondLine = new StringBuilder();
 
     while (n > 0 || m > 0) {
-      boolean moveFirst = false;
-      boolean moveSecond = false;
-      if (n == 0) {
-        moveSecond = true;
-      } else if (m == 0) {
-        moveFirst = true;
-      } else {
-        int res1 = d[n][m - 1] + 1;
-        int res2 = d[n - 1][m] + 1;
-        int res3 = d[n - 1][m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
-        if (res1 <= res2 && res1 <= res3) {
-          moveSecond = true;
-        } else {
-          if (res2 <= res3) {
-            moveFirst = true;
-          } else {
-            moveFirst = true;
-            moveSecond = true;
-          }
-        }
-      }
-      if (moveFirst) {
+      boolean mf = moveFirst[n][m];
+      boolean ms = moveSecond[n][m];
+      if (mf) {
         firstLine.append(first.charAt(n - 1));
         n--;
       } else {
         firstLine.append("-");
       }
-      if (moveSecond) {
+      if (ms) {
         secondLine.append(second.charAt(m - 1));
         m--;
       } else {
