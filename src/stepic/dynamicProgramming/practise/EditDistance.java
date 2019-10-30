@@ -24,15 +24,14 @@ public class EditDistance {
     for (int n = 0; n <= first.length(); n++) {
       for (int m = 0; m <= second.length(); m++) {
         if (n == 0 && m == 0) cur[m] = 0;
-        else if (n == 0) {
-          cur[m] = m;
-        } else if (m == 0) {
-          cur[m] = n;
-        } else {
-          int res1 = cur[m - 1] + 1;
-          int res2 = prev[m] + 1;
-          int res3 = prev[m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
-          int result = Math.min(Math.min(res1, res2), res3);
+        else {
+          int result = Integer.MAX_VALUE;
+          if (m > 0)
+            result = Math.min(result, cur[m - 1] + 1);
+          if (n > 0)
+            result = Math.min(result, prev[m] + 1);
+          if (n > 0 && m > 0)
+            result = Math.min(result, prev[m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1));
           cur[m] = result;
         }
       }
