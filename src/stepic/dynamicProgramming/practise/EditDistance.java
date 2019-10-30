@@ -15,11 +15,31 @@ public class EditDistance {
     first = scanner.next();
     second = scanner.next();
     d = new int[first.length() + 1][second.length() + 1];
-    calculated = new boolean[first.length() + 1][second.length() + 1];
-    System.out.println(editDistance(first.length(), second.length()));
+//    for recursion
+//    calculated = new boolean[first.length() + 1][second.length() + 1];
+
+    System.out.println(editDistance());
   }
 
-  private static int editDistance(int n, int m) {
+  private static int editDistance() {
+    for (int n = 0; n <= first.length(); n++) {
+      for (int m = 0; m <= second.length(); m++) {
+        if (n == 0 && m == 0) d[n][m] = 0;
+        else if (n == 0) d[n][m] = m;
+        else if (m == 0) d[n][m] = n;
+        else {
+          int res1 = d[n][m - 1] + 1;
+          int res2 = d[n - 1][m] + 1;
+          int res3 = d[n - 1][m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
+          int result = Math.min(Math.min(res1, res2), res3);
+          d[n][m] = result;
+        }
+      }
+    }
+    return d[first.length()][second.length()];
+  }
+
+  private static int editDistanceRecursion(int n, int m) {
     //first[0..n-1], second[0..m-1]
     if (n == 0 && m == 0) return 0;
     if (n == 0) return m;
@@ -27,9 +47,9 @@ public class EditDistance {
     if (calculated[n][m]) {
       return d[n][m];
     }
-    int res1 = editDistance(n, m - 1) + 1;
-    int res2 = editDistance(n - 1, m) + 1;
-    int res3 = editDistance(n - 1, m - 1) + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
+    int res1 = editDistanceRecursion(n, m - 1) + 1;
+    int res2 = editDistanceRecursion(n - 1, m) + 1;
+    int res3 = editDistanceRecursion(n - 1, m - 1) + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
     int result = Math.min(Math.min(res1, res2), res3);
     calculated[n][m] = true;
     d[n][m] = result;
