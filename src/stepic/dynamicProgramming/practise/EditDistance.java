@@ -36,6 +36,51 @@ public class EditDistance {
         }
       }
     }
+    int n = first.length();
+    int m = second.length();
+
+    StringBuilder firstLine = new StringBuilder();
+    StringBuilder secondLine = new StringBuilder();
+
+    while (n > 0 || m > 0) {
+      boolean moveFirst = false;
+      boolean moveSecond = false;
+      if (n == 0) {
+        moveSecond = true;
+      } else if (m == 0) {
+        moveFirst = true;
+      } else {
+        int res1 = d[n][m - 1] + 1;
+        int res2 = d[n - 1][m] + 1;
+        int res3 = d[n - 1][m - 1] + (first.charAt(n - 1) == second.charAt(m - 1) ? 0 : 1);
+        if (res1 <= res2 && res1 <= res3) {
+          moveSecond = true;
+        } else {
+          if (res2 <= res3) {
+            moveFirst = true;
+          } else {
+            moveFirst = true;
+            moveSecond = true;
+          }
+        }
+      }
+      if (moveFirst) {
+        firstLine.append(first.charAt(n - 1));
+        n--;
+      } else {
+        firstLine.append("-");
+      }
+      if (moveSecond) {
+        secondLine.append(second.charAt(m - 1));
+        m--;
+      } else {
+        secondLine.append("-");
+      }
+    }
+    firstLine.reverse();
+    secondLine.reverse();
+    System.out.println(firstLine);
+    System.out.println(secondLine);
     return d[first.length()][second.length()];
   }
 
