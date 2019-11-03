@@ -32,12 +32,12 @@ public class Balance {
   }
 
   private static String isBalanced(String str) {
-    char or = 40;
-    char os = 91;
-    char ob = 123;
-    char cr = 41;
-    char cs = 93;
-    char cb = 125;
+    char or = 40; // "("
+    char os = 91; // "["
+    char ob = 123; // "{"
+    char cr = 41; // ")"
+    char cs = 93; // "]"
+    char cb = 125; // "}"
     LinkedList<Bracket> stack = new LinkedList<>();
 
     char c;
@@ -59,7 +59,7 @@ public class Balance {
       }
     }
     if (stack.isEmpty()) return "Success";
-    else return ++stack.getFirst().index + "";
+    return ++stack.getFirst().index + "";
   }
 
   private static class Bracket {
