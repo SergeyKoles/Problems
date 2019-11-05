@@ -4,102 +4,47 @@ package stepic.baseDataStructure;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.StringTokenizer;
 
+/**
+ *
+ * Высота дерева
+ * Sample Input:
+ *
+ * 10
+ * 9 7 5 5 2 9 9 9 2 -1
+ * Sample Output:
+ *
+ * 4
+ */
 public class TreeHeight {
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
       StringTokenizer st = new StringTokenizer(br.readLine());
-      String[] A = new String[n];
+      int[] A = new int[n];
       for (int i = 0; i < n; i++) {
-        A[i] = st.nextToken();
+        A[i] = Integer.parseInt(st.nextToken());
       }
-      System.out.println(new TreeHeight().run(A));
+      System.out.println(new TreeHeight().run(A, n));
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private int run(String[] A) {
-    Node root = null;
-    Map<String, Node> nodes = new HashMap<>();
-    for (int i = 0; i < A.length; i++) {
-      if (nodes.containsKey(i + "") && nodes.containsKey(A[i])) {
-        Node c = nodes.get(i + "");
-        Node p = nodes.get(A[i]);
-        p.children.add(c);
-        int dif = c.height - p.height;
-        if (dif >= 0) heightsRecalculation(p, dif + 1);
-      } else if (!nodes.containsKey(i + "") && !nodes.containsKey(A[i])) {
-        Node c = new Node(i + "");
-        Node p = new Node(A[i]);
-        c.height = 1;
-        p.height = 2;
-        c.parent = p;
-        p.children.add(c);
-        nodes.put(i + "", c);
-        nodes.put(A[i], p);
-        if (A[i].equals("-1")) root = p;
-      } else if (nodes.containsKey(i + "")) {
-        Node c = nodes.get(i + "");
-        Node p = new Node(A[i]);
-        c.parent = p;
-        p.children.add(c);
-        p.height = c.height + 1;
-        nodes.put(A[i], p);
-        if (A[i].equals("-1")) root = p;
-      } else {
-        Node c = new Node(i + "");
-        Node p = nodes.get(A[i]);
-        c.height = 1;
-        c.parent = p;
-        p.children.add(c);
-        nodes.put(i + "", c);
-        int dif = c.height - p.height;
-        if (dif >= 0) heightsRecalculation(p, dif + 1);
-        if (A[i].equals("-1")) root = p;
+  private int run(int[] A, int n) {
+    int res = 0;
+    for (int i = 0; i < n; i++) {
+      int p = i;
+      int cur = 1;
+      while (A[p] != -1) {
+        cur++;
+        p = A[p];
       }
+      res = Math.max(res, cur);
     }
-    return new ArrayList<>(root.children).get(0).height;
-  }
-
-  private void heightsRecalculation(Node n, int v) {
-    n.height += v;
-    int c = n.height;
-    if (n.parent == null) return;
-
-    int dif = c - n.parent.height;
-    if (dif >= 0)
-      heightsRecalculation(n.parent, dif + 1);
-  }
-
-  private class Node {
-    private String value;
-    private Node parent = null;
-    private HashSet<Node> children = new HashSet<>();
-    private int height = 1;
-
-    public Node(String value) {
-      this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      Node node = (Node) o;
-      return value == node.value;
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(value);
-    }
+    return res;
   }
 }
 
-/*
-10
-9 7 5 5 2 9 9 9 2 -1
- */
+
