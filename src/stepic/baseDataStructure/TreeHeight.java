@@ -25,38 +25,40 @@ public class TreeHeight {
     Node root = null;
     Map<String, Node> nodes = new HashMap<>();
     for (int i = 0; i < A.length; i++) {
-      if (nodes.containsKey(i + "")) {
+      if (nodes.containsKey(i + "") && nodes.containsKey(A[i])) {
         Node c = nodes.get(i + "");
-        if (nodes.containsKey(A[i])) {
-          Node p = nodes.get(A[i]);
-          p.children.add(c);
-          int dif = c.height - p.height;
-          if (dif >= 0) heightsRecalculation(p, dif + 1);
-        } else {
-          Node p = new Node(A[i]);
-          p.height = c.height + 1;
-          p.children.add(c);
-          nodes.put(p.value,p);
-          if (A[i].equals("-1")) root = p;
-        }
+        Node p = nodes.get(A[i]);
+        p.children.add(c);
+        int dif = c.height - p.height;
+        if (dif >= 0) heightsRecalculation(p, dif + 1);
+      } else if (!nodes.containsKey(i + "") && !nodes.containsKey(A[i])) {
+        Node c = new Node(i + "");
+        Node p = new Node(A[i]);
+        c.height = 1;
+        p.height = 2;
+        c.parent = p;
+        p.children.add(c);
+        nodes.put(i + "", c);
+        nodes.put(A[i], p);
+        if (A[i].equals("-1")) root = p;
+      } else if (nodes.containsKey(i + "")) {
+        Node c = nodes.get(i + "");
+        Node p = new Node(A[i]);
+        c.parent = p;
+        p.children.add(c);
+        p.height = c.height + 1;
+        nodes.put(A[i], p);
+        if (A[i].equals("-1")) root = p;
       } else {
         Node c = new Node(i + "");
+        Node p = nodes.get(A[i]);
         c.height = 1;
+        c.parent = p;
+        p.children.add(c);
         nodes.put(i + "", c);
-        if (nodes.containsKey(A[i])) {
-          Node parent = nodes.get(A[i]);
-          parent.children.add(c);
-          c.parent = parent;
-          if (parent.height == 1) {
-            parent.height =2;
-          }
-        } else {
-          Node p = new Node(A[i]);
-          p.height = 2;
-          c.children.add(c);
-          nodes.put(A[i], p);
-          if (A[i].equals("-1")) root = p;
-        }
+        int dif = c.height - p.height;
+        if (dif >= 0) heightsRecalculation(p, dif + 1);
+        if (A[i].equals("-1")) root = p;
       }
     }
     return new ArrayList<>(root.children).get(0).height;
@@ -64,10 +66,10 @@ public class TreeHeight {
 
   private void heightsRecalculation(Node n, int v) {
     n.height += v;
-    int h = n.height;
+    int c = n.height;
     if (n.parent == null) return;
 
-    int dif = h - n.parent.height;
+    int dif = c - n.parent.height;
     if (dif >= 0)
       heightsRecalculation(n.parent, dif + 1);
   }
@@ -96,3 +98,8 @@ public class TreeHeight {
     }
   }
 }
+
+/*
+10
+9 7 5 5 2 9 9 9 2 -1
+ */
