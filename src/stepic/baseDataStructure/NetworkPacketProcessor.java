@@ -3,6 +3,7 @@ package stepic.baseDataStructure;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.LinkedList;
 import java.util.StringTokenizer;
 
 /**
@@ -71,22 +72,49 @@ import java.util.StringTokenizer;
 public class NetworkPacketProcessor {
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
-      int size = Integer.parseInt(br.readLine());
-      int n = Integer.parseInt(br.readLine());
-      StringTokenizer st;
+      StringTokenizer st = new StringTokenizer(br.readLine());
+      int size = Integer.parseInt(st.nextToken());
+      int n = Integer.parseInt(st.nextToken());
       Packet[] packets = new Packet[n];
       for (int i = 0; i < n; i++) {
         st = new StringTokenizer(br.readLine());
         packets[i] = new Packet(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
       }
-      new NetworkPacketProcessor().process(packets, size);
+      new NetworkPacketProcessor().process(packets, size, n);
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private void process(Packet[] p, int buf) {
+  private void process(Packet[] p, int size, int n) {
+    if (size == 0 || n == 0) return;
+    LinkedList<Packet> buff = new LinkedList<>();
 
+    int startProcessing = 0;
+
+    for (int i = 0; i < n; i++) {
+      if (buff.isEmpty()) {
+        buff.add(p[i]);
+        System.out.print(p[i].arr + p[i].dur + " ");
+      } else {
+        while (!buff.isEmpty()) {
+          Packet processingPac = buff.peek();
+          if (p[i].arr < processingPac.arr + processingPac.dur) break;
+          buff.poll();
+        }
+        if (size > buff.size()) {
+          buff.add(p[i]);
+          if (startProcessing > p[i].arr) {
+            startProcessing += p[i].dur;
+          } else {
+            startProcessing = p[i].arr;
+          }
+          System.out.print(startProcessing + " ");
+        } else {
+          System.out.print(-1 + " ");
+        }
+      }
+    }
   }
 
   private static class Packet {
