@@ -87,32 +87,27 @@ public class NetworkPacketProcessor {
   }
 
   private void process(Packet[] p, int size, int n) {
-    if (size == 0 || n == 0) return;
+    if (size == 0 || n == 0) System.out.println();
     LinkedList<Packet> buff = new LinkedList<>();
 
     int startProcessing = 0;
 
     for (int i = 0; i < n; i++) {
-      if (buff.isEmpty()) {
+      while (!buff.isEmpty()) {
+        Packet processingPac = buff.peek();
+        if (p[i].arr < processingPac.arr + processingPac.dur) break;
+        buff.poll();
+      }
+      if (buff.isEmpty() || size > buff.size()) {
         buff.add(p[i]);
-        System.out.print(p[i].arr + p[i].dur + " ");
-      } else {
-        while (!buff.isEmpty()) {
-          Packet processingPac = buff.peek();
-          if (p[i].arr < processingPac.arr + processingPac.dur) break;
-          buff.poll();
-        }
-        if (size > buff.size()) {
-          buff.add(p[i]);
-          if (startProcessing > p[i].arr) {
-            startProcessing += p[i].dur;
-          } else {
-            startProcessing = p[i].arr;
-          }
-          System.out.print(startProcessing + " ");
+        if (startProcessing > p[i].arr) {
+          startProcessing += p[i].dur;
         } else {
-          System.out.print(-1 + " ");
+          startProcessing = p[i].arr;
         }
+        System.out.print(startProcessing + " ");
+      } else {
+        System.out.print(-1 + " ");
       }
     }
   }
