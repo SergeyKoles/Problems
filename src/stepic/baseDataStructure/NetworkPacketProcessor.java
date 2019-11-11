@@ -100,12 +100,11 @@ public class NetworkPacketProcessor {
       }
       if (buff.isEmpty() || size > buff.size()) {
         buff.add(p[i]);
-        if (startProcessing > p[i].arr) {
-          startProcessing += p[i].dur;
-        } else {
+        if (startProcessing <= p[i].arr) {
           startProcessing = p[i].arr;
         }
         System.out.print(startProcessing + " ");
+        startProcessing += p[i].dur;
       } else {
         System.out.print(-1 + " ");
       }
