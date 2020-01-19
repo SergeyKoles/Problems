@@ -1,6 +1,6 @@
 package stepic.dynamicProgramming;
 
-import org.junit.Test;
+//import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class Ladder {
     }
   }
 
-  @Test
+//  @Test
   public void test() {
     test(new int[]{1, 1, -2, -4, -6, 2, 2}, 2);
     test(new int[]{-64, -16, -13, -9, -48}, -73);
