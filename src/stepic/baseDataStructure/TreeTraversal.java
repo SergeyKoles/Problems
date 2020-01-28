@@ -21,16 +21,16 @@ public class TreeTraversal {
         int right = Integer.parseInt(st.nextToken());
         tree[i] = new Node(key, left, right);
       }
-      printInOrder(tree[0]);
-      printPreOrder(tree[0]);
-      printPostOrder(tree[0]);
+      printInOrder(tree);
+      printPreOrder(tree);
+      printPostOrder(tree);
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private static void printInOrder(Node v) {
-    System.out.println(inOrder(v, new StringBuilder()).toString());
+  private static void printInOrder(Node[] tree) {
+    System.out.println(inOrder(tree[0], new StringBuilder()).toString());
   }
 
   private static StringBuilder inOrder(Node v, StringBuilder sb) {
@@ -44,8 +44,8 @@ public class TreeTraversal {
     return sb;
   }
 
-  private static void printPreOrder(Node v) {
-    System.out.println(preOrder(v, new StringBuilder()).toString());
+  private static void printPreOrder(Node[] tree) {
+    System.out.println(preOrder(tree[0], new StringBuilder()).toString());
   }
 
   private static StringBuilder preOrder(Node v, StringBuilder sb) {
@@ -59,8 +59,8 @@ public class TreeTraversal {
     return sb;
   }
 
-  private static void printPostOrder(Node v) {
-    System.out.println(postOrder(v, new StringBuilder()).toString());
+  private static void printPostOrder(Node[] tree) {
+    System.out.println(postOrder(tree[0], new StringBuilder()).toString());
   }
 
   private static StringBuilder postOrder(Node v, StringBuilder sb) {
