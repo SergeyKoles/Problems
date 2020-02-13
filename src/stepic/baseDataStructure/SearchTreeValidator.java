@@ -60,7 +60,7 @@ public class SearchTreeValidator {
       isValid = isTreeValid(tree, tree[v.left]);
     }
     if (isValid) {
-      if (isNodeValid(tree, v)) return false;
+      if (!isNodeValid(tree, v)) return false;
       if (v.right != -1) {
         isValid = isTreeValid(tree, tree[v.right]);
       }
@@ -78,17 +78,17 @@ public class SearchTreeValidator {
         if (nodeValue < parent.key && child.key < parent.key) {
           child = parent;
         } else {
-          return true;
+          return false;
         }
       } else {
         if (nodeValue > parent.key && child.key > parent.key) {
           child = parent;
         } else {
-          return true;
+          return false;
         }
       }
     }
-    return false;
+    return true;
   }
 
 
