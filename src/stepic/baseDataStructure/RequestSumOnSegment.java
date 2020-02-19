@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 
 public class RequestSumOnSegment {
 
-  private static Node tree;
+  private static Node root;
 
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
@@ -19,7 +19,7 @@ public class RequestSumOnSegment {
         String value = st.nextToken();
         process(key, value);
       }
-      print(tree);
+      print(root);
       System.out.println("************");
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
@@ -42,19 +42,16 @@ public class RequestSumOnSegment {
 
   private static void add(String value) {
     int key = Integer.parseInt(value);
-    if (tree == null) {
-      tree = new Node(key, null);
+    if (root == null) {
+      root = new Node(key, null);
     } else {
       Node node = createNode(key);
-      if (node.left == null && node.right == null) {
-//        fixHeight(node);
-        balance(node.parent);
-      }
+      balance(node.parent);
     }
   }
 
   private static Node createNode(int key) {
-    Node node = tree;
+    Node node = root;
     while (key != node.val) {
       if (node.val > key) {
         if (node.left == null) {
@@ -73,19 +70,58 @@ public class RequestSumOnSegment {
 
 
   private static void balance(Node n) {
-    if (n == null) return;
-    fixHeight(n);
-    int balance = bFactor(n);
-    if (balance == 2) {
-      if (bFactor(n.right) < 0)
-        n.right = rightRotation(n.right);
-      n = leftRotation(n);
-    } else if (balance == -2) {
-      if (bFactor(n.left) > 0)
-        n.left = leftRotation(n.left);
-      n = rightRotation(n);
+    while (n != null) {
+      fixHeight(n);
+      int balance = bFactor(n);
+      if (balance == 2) {
+        if (bFactor(n.right) < 0)
+          n.right = rightRotation(n.right);
+        n = leftRotation(n);
+      } else if (balance == -2) {
+        if (bFactor(n.left) > 0)
+          n.left = leftRotation(n.left);
+        n = rightRotation(n);
+      }
+      if (n.parent == null)
+        root = n;
+      n = n.parent;
     }
-    balance(n.parent);
+  }
+
+  private static Node leftRotation(Node n) {
+    Node r = n.right;
+    if (n.parent != null) {
+      if (n.parent.right.val == n.val) {
+        n.parent.right = r;
+      } else n.parent.left = r;
+    }
+    n.right = r.left;
+    if (n.right != null)
+      n.right.parent = n;
+    r.left = n;
+    r.parent = n.parent;
+    n.parent = r;
+    fixHeight(n);
+    fixHeight(r);
+    return r;
+  }
+
+  private static Node rightRotation(Node n) {
+    Node l = n.left;
+    if (n.parent != null) {
+      if (n.parent.right.val == n.val) {
+        n.parent.right = l;
+      } else n.parent.left = l;
+    }
+    n.left = l.right;
+    if (n.left != null)
+      n.left.parent = n;
+    l.right = n;
+    l.parent = n.parent;
+    n.parent = l;
+    fixHeight(n);
+    fixHeight(l);
+    return l;
   }
 
   private static void fixHeight(Node n) {
@@ -94,30 +130,11 @@ public class RequestSumOnSegment {
     n.h = ((hl > hr) ? hl : hr) + 1;
   }
 
-  private static Node leftRotation(Node n) {
-    Node r = n.right;
-    n.right = r.left;
-    r.left = n;
-    fixHeight(n);
-    fixHeight(r);
-    return r;
-  }
-
-  private static Node rightRotation(Node n) {
-    Node l = n.left;
-    n.left = l.right;
-    l.right = n;
-    fixHeight(n);
-    fixHeight(l);
-    return l;
-  }
-
-
   private static int height(Node n) {
     return n != null ? n.h : 0;
   }
 
-  private static int bFactor(Node n){
+  private static int bFactor(Node n) {
     return height(n.right) - height(n.left);
   }
 
@@ -141,7 +158,6 @@ public class RequestSumOnSegment {
   private static class Node {
     private int val;
     private int h;
-    private int balance;
     private Node parent;
     private Node left;
     private Node right;
@@ -150,7 +166,6 @@ public class RequestSumOnSegment {
       this.val = val;
       this.parent = parent;
       this.h = 1;
-      this.balance = 0;
     }
 
     public Node(int val, Node left, Node right) {
@@ -159,8 +174,28 @@ public class RequestSumOnSegment {
       this.right = right;
     }
 
-    private static void print() {
-
+    @Override
+    public String toString() {
+      return "val=" + val +
+              ", h=" + h;
     }
   }
 }
+/*
+15
++ 1
++ 2
++ 3
++ 4
++ 5
++ 15
++ 14
++ 13
++ 6
++ 7
++ 8
++ 9
++ 10
++ 11
++ 12
+* */
