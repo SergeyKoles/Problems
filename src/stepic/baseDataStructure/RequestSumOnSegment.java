@@ -7,6 +7,8 @@ import java.util.StringTokenizer;
 
 public class RequestSumOnSegment {
 
+  public static final String NOT_FOUND = "Not found";
+  public static final String FOUND = "Found";
   private static Node root;
 
   public static void main(String[] args) {
@@ -19,7 +21,6 @@ public class RequestSumOnSegment {
         String value = st.nextToken();
         process(key, value);
       }
-      print(root);
       System.out.println("************");
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
@@ -34,33 +35,42 @@ public class RequestSumOnSegment {
       case "-":
         break;
       case "?":
+        find(value);
         break;
       case "s":
         break;
     }
   }
 
+  private static void find(String value) {
+    int val = Integer.parseInt(value);
+
+    if (findNode(val) == null)
+      System.out.println(NOT_FOUND);
+    else System.out.println(FOUND);
+  }
+
   private static void add(String value) {
-    int key = Integer.parseInt(value);
+    int val = Integer.parseInt(value);
     if (root == null) {
-      root = new Node(key, null);
+      root = new Node(val, null);
     } else {
-      Node node = createNode(key);
+      Node node = createNode(val);
       balance(node.parent);
     }
   }
 
-  private static Node createNode(int key) {
+  private static Node createNode(int val) {
     Node node = root;
-    while (key != node.val) {
-      if (node.val > key) {
+    while (val != node.val) {
+      if (node.val > val) {
         if (node.left == null) {
-          node.left = new Node(key, node);
+          node.left = new Node(val, node);
         }
         node = node.left;
       } else {
         if (node.right == null) {
-          node.right = new Node(key, node);
+          node.right = new Node(val, node);
         }
         node = node.right;
       }
@@ -68,6 +78,20 @@ public class RequestSumOnSegment {
     return node;
   }
 
+  private static Node findNode(int val) {
+    Node node = root;
+    while (val != node.val) {
+      if (node.val > val) {
+        node = node.left;
+      } else {
+        node = node.right;
+      }
+      if (node == null) {
+        return null;
+      }
+    }
+    return node;
+  }
 
   private static void balance(Node n) {
     while (n != null) {
@@ -138,23 +162,6 @@ public class RequestSumOnSegment {
     return height(n.right) - height(n.left);
   }
 
-
-  private static void print(Node node, int level) {
-    if (node != null) {
-      print(node.right, level + 1);
-      for (int i = 0; i < level; i++) {
-        System.out.print("\t");
-      }
-//            System.out.println(node.key + "->" + node.key+" h="+node.h+" balance="+node.balance);
-      System.out.println(node.val + "->" + node.val + " h=" + node.h);
-      print(node.left, level + 1);
-    }
-  }
-
-  private static void print(Node root) {
-    print(root, 0);
-  }
-
   private static class Node {
     private int val;
     private int h;
@@ -181,21 +188,3 @@ public class RequestSumOnSegment {
     }
   }
 }
-/*
-15
-+ 1
-+ 2
-+ 3
-+ 4
-+ 5
-+ 15
-+ 14
-+ 13
-+ 6
-+ 7
-+ 8
-+ 9
-+ 10
-+ 11
-+ 12
-* */
