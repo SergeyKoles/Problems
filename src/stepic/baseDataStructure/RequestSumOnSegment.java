@@ -33,6 +33,7 @@ public class RequestSumOnSegment {
         add(value);
         break;
       case "-":
+        delete(value);
         break;
       case "?":
         find(value);
@@ -40,6 +41,46 @@ public class RequestSumOnSegment {
       case "s":
         break;
     }
+  }
+
+  private static void delete(String value) {
+    int val = Integer.parseInt(value);
+    Node d = findNode(val);
+    if (d == null) return;
+
+    Node nodeForSwap = d;
+
+    if (d.left != null) {
+      nodeForSwap = findMaxNode(d.left);
+    } else if (d.right != null) {
+      nodeForSwap = findMinNode(d.right);
+    }
+
+    Node parent = d.parent;
+    if (nodeForSwap.val == d.val) {
+      if (parent != null) {
+        setParentSon(d.val, null, parent);
+        balance(parent);
+      } else {
+        root = null;
+      }
+    } else {
+      if (parent != null) {
+        setParentSon(d.val, nodeForSwap, parent);
+      }
+      setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
+      nodeForSwap.right = d.right;
+      nodeForSwap.left = d.left;
+      nodeForSwap.parent = d.parent;
+
+      if (nodeForSwap.left != null)
+        nodeForSwap.left.parent = nodeForSwap;
+      if (nodeForSwap.right != null)
+        nodeForSwap.right.parent = nodeForSwap;
+
+      balance(nodeForSwap);
+    }
+    d = null;
   }
 
   private static void find(String value) {
@@ -59,6 +100,8 @@ public class RequestSumOnSegment {
       balance(node.parent);
     }
   }
+
+  // ==========================================
 
   private static Node createNode(int val) {
     Node node = root;
@@ -93,6 +136,26 @@ public class RequestSumOnSegment {
     return node;
   }
 
+  private static Node findMaxNode(Node nodeForSwarp) {
+    while (nodeForSwarp.right != null) {
+      nodeForSwarp = nodeForSwarp.right;
+    }
+    return nodeForSwarp;
+  }
+
+  private static Node findMinNode(Node nodeForSwarp) {
+    while (nodeForSwarp.left != null) {
+      nodeForSwarp = nodeForSwarp.left;
+    }
+    return nodeForSwarp;
+  }
+
+  private static void setParentSon(int val, Node son, Node parent) {
+    if (parent.right != null && parent.right.val == val)
+      parent.right = son;
+    else parent.left = son;
+  }
+
   private static void balance(Node n) {
     while (n != null) {
       fixHeight(n);
@@ -115,9 +178,7 @@ public class RequestSumOnSegment {
   private static Node leftRotation(Node n) {
     Node r = n.right;
     if (n.parent != null) {
-      if (n.parent.right.val == n.val) {
-        n.parent.right = r;
-      } else n.parent.left = r;
+      setParentSon(n.val, r, n.parent);
     }
     n.right = r.left;
     if (n.right != null)
@@ -133,9 +194,7 @@ public class RequestSumOnSegment {
   private static Node rightRotation(Node n) {
     Node l = n.left;
     if (n.parent != null) {
-      if (n.parent.right.val == n.val) {
-        n.parent.right = l;
-      } else n.parent.left = l;
+      setParentSon(n.val, l, n.parent);
     }
     n.left = l.right;
     if (n.left != null)
@@ -173,12 +232,6 @@ public class RequestSumOnSegment {
       this.val = val;
       this.parent = parent;
       this.h = 1;
-    }
-
-    public Node(int val, Node left, Node right) {
-      this.val = val;
-      this.left = left;
-      this.right = right;
     }
 
     @Override
