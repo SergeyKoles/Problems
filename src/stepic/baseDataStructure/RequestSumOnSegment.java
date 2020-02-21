@@ -69,8 +69,10 @@ public class RequestSumOnSegment {
         setParentSon(d.val, nodeForSwap, parent);
       }
       setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
-      nodeForSwap.right = d.right;
-      nodeForSwap.left = d.left;
+      if (nodeForSwap.left == null)
+        nodeForSwap.left = d.left;
+      if (nodeForSwap.right == null)
+        nodeForSwap.right = d.right;
       nodeForSwap.parent = d.parent;
 
       if (nodeForSwap.left != null)
