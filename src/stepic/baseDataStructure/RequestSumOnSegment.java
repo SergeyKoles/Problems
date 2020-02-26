@@ -61,21 +61,23 @@ public class RequestSumOnSegment {
     Node rootOfSegment = findRootOfSegment(l, r);
     long sum = 0;
 
-    Node maxNodeFromLeft;
-    if (rootOfSegment.left != null) {
-      maxNodeFromLeft = findMaxNode(rootOfSegment.left);
-      long leftSum = countSubTreeSum(l, r, rootOfSegment, maxNodeFromLeft);
-      sum = (sum + leftSum) % MOD;
-    }
-    Node minNodeFromRight;
-    if (rootOfSegment.right != null) {
-      minNodeFromRight = findMinNode(rootOfSegment.right);
-      long rightSum = countSubTreeSum(l, r, rootOfSegment, minNodeFromRight);
-      sum = (sum + rightSum) % MOD;
-    }
+    if (rootOfSegment != null) {
+      Node maxNodeFromLeft;
+      if (rootOfSegment.left != null) {
+        maxNodeFromLeft = findMaxNode(rootOfSegment.left);
+        long leftSum = countSubTreeSum(l, r, rootOfSegment, maxNodeFromLeft);
+        sum = (sum + leftSum) % MOD;
+      }
+      Node minNodeFromRight;
+      if (rootOfSegment.right != null) {
+        minNodeFromRight = findMinNode(rootOfSegment.right);
+        long rightSum = countSubTreeSum(l, r, rootOfSegment, minNodeFromRight);
+        sum = (sum + rightSum) % MOD;
+      }
 
-    if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
-      sum = (sum + rootOfSegment.val) % MOD;
+      if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
+        sum = (sum + rootOfSegment.val) % MOD;
+      }
     }
     s = sum;
     System.out.println(sum);
