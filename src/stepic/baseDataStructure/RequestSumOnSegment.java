@@ -199,14 +199,16 @@ public class RequestSumOnSegment {
 
   private static Node findNode(long val) {
     Node node = root;
-    while (val != node.val) {
-      if (node.val > val) {
-        node = node.left;
-      } else {
-        node = node.right;
-      }
-      if (node == null) {
-        return null;
+    if (node != null) {
+      while (val != node.val) {
+        if (node.val > val) {
+          node = node.left;
+        } else {
+          node = node.right;
+        }
+        if (node == null) {
+          return null;
+        }
       }
     }
     return node;
