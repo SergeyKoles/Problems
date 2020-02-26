@@ -9,43 +9,82 @@ public class RequestSumOnSegment {
 
   public static final String NOT_FOUND = "Not found";
   public static final String FOUND = "Found";
+  public static final int MOD = 1_000_000_001;
+  private static long s = 0;
   private static Node root;
 
   public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
-      StringTokenizer st;
+
+//      while (true) {
+//        String req = br.readLine();
+//        if (req.startsWith("end")) break;
+//        process(req);
+//      }
+//
       for (int i = 0; i < n; i++) {
-        st = new StringTokenizer(br.readLine());
-        String key = st.nextToken();
-        String value = st.nextToken();
-        process(key, value);
+        String req = br.readLine();
+        process(req);
       }
-      System.out.println("************");
     } catch (IOException e) {
       System.out.println("-------- Oops!!! --------");
     }
   }
 
-  private static void process(String key, String value) {
+  private static void process(String req) {
+    StringTokenizer st = new StringTokenizer(req);
+    String key = st.nextToken();
+
     switch (key) {
       case "+":
-        add(value);
+        add(st.nextToken());
         break;
       case "-":
-        delete(value);
+        delete(st.nextToken());
         break;
       case "?":
-        find(value);
+        find(st.nextToken());
         break;
       case "s":
+        sum(st.nextToken(), st.nextToken());
         break;
     }
   }
 
+  private static void sum(String left, String right) {
+    int L = Integer.parseInt(left);
+    int R = Integer.parseInt(right);
+    long l = (L + s) % MOD;
+    long r = (R + s) % MOD;
+
+    Node rootOfSegment = findRootOfSegment(l, r);
+    long sum = 0;
+
+    Node maxNodeFromLeft;
+    if (rootOfSegment.left != null) {
+      maxNodeFromLeft = findMaxNode(rootOfSegment.left);
+      long leftSum = countSubTreeSum(l, r, rootOfSegment, maxNodeFromLeft);
+      sum = (sum + leftSum) % MOD;
+    }
+    Node minNodeFromRight;
+    if (rootOfSegment.right != null) {
+      minNodeFromRight = findMinNode(rootOfSegment.right);
+      long rightSum = countSubTreeSum(l, r, rootOfSegment, minNodeFromRight);
+      sum = (sum + rightSum) % MOD;
+    }
+
+    if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
+      sum = (sum + rootOfSegment.val) % MOD;
+    }
+    s = sum;
+    System.out.println(sum);
+  }
+
   private static void delete(String value) {
     int val = Integer.parseInt(value);
-    Node d = findNode(val);
+    long fi = (val + s) % MOD;
+    Node d = findNode(fi);
     if (d == null) return;
 
     Node nodeForSwap = d;
@@ -87,25 +126,58 @@ public class RequestSumOnSegment {
 
   private static void find(String value) {
     int val = Integer.parseInt(value);
-
-    if (findNode(val) == null)
+    long fi = (val + s) % MOD;
+    if (root == null || findNode(fi) == null)
       System.out.println(NOT_FOUND);
     else System.out.println(FOUND);
   }
 
   private static void add(String value) {
     int val = Integer.parseInt(value);
+    long fi = (val + s) % MOD;
     if (root == null) {
-      root = new Node(val, null);
+      root = new Node(fi, null);
     } else {
-      Node node = createNode(val);
+      Node node = createNode(fi);
       balance(node.parent);
     }
   }
 
   // ==========================================
 
-  private static Node createNode(int val) {
+
+  private static long countSubTreeSum(long l, long r, Node rootOfSegment, Node startNode) {
+    Node current = startNode;
+    long sum = 0;
+    while (current != null && current != rootOfSegment) {
+      long val = current.val;
+      if (l <= val && val <= r) {
+        sum = (sum + val) % MOD;
+      }
+      current = current.parent;
+    }
+    return sum;
+  }
+
+  private static Node findRootOfSegment(long l, long r) {
+    Node rootOfSegment = root;
+
+    while (rootOfSegment != null) {
+      long val = rootOfSegment.val;
+      if (l <= val && val <= r) {
+        break;
+      } else if (l > val) {
+        if (rootOfSegment.right == null) break;
+        rootOfSegment = rootOfSegment.right;
+      } else {
+        if (rootOfSegment.left == null) break;
+        rootOfSegment = rootOfSegment.left;
+      }
+    }
+    return rootOfSegment;
+  }
+
+  private static Node createNode(long val) {
     Node node = root;
     while (val != node.val) {
       if (node.val > val) {
@@ -123,7 +195,7 @@ public class RequestSumOnSegment {
     return node;
   }
 
-  private static Node findNode(int val) {
+  private static Node findNode(long val) {
     Node node = root;
     while (val != node.val) {
       if (node.val > val) {
@@ -138,21 +210,21 @@ public class RequestSumOnSegment {
     return node;
   }
 
-  private static Node findMaxNode(Node nodeForSwarp) {
-    while (nodeForSwarp.right != null) {
-      nodeForSwarp = nodeForSwarp.right;
+  private static Node findMinNode(Node initialNode) {
+    while (initialNode.left != null) {
+      initialNode = initialNode.left;
     }
-    return nodeForSwarp;
+    return initialNode;
   }
 
-  private static Node findMinNode(Node nodeForSwarp) {
-    while (nodeForSwarp.left != null) {
-      nodeForSwarp = nodeForSwarp.left;
+  private static Node findMaxNode(Node initialNode) {
+    while (initialNode.right != null) {
+      initialNode = initialNode.right;
     }
-    return nodeForSwarp;
+    return initialNode;
   }
 
-  private static void setParentSon(int val, Node son, Node parent) {
+  private static void setParentSon(long val, Node son, Node parent) {
     if (parent.right != null && parent.right.val == val)
       parent.right = son;
     else parent.left = son;
@@ -224,13 +296,13 @@ public class RequestSumOnSegment {
   }
 
   private static class Node {
-    private int val;
+    private long val;
     private int h;
     private Node parent;
     private Node left;
     private Node right;
 
-    public Node(int val, Node parent) {
+    public Node(long val, Node parent) {
       this.val = val;
       this.parent = parent;
       this.h = 1;
