@@ -61,22 +61,21 @@ public class RequestSumOnSegment {
     Node rootOfSegment = findRootOfSegment(l, r);
     long sum = 0;
 
-    if (rootOfSegment != null) {
-      Node maxNodeFromLeft;
-      if (rootOfSegment.left != null) {
-        maxNodeFromLeft = findMaxNode(rootOfSegment.left);
-        long leftSum = countSubTreeSum(l, r, rootOfSegment, maxNodeFromLeft);
-        sum = (sum + leftSum) % MOD;
-      }
-      Node minNodeFromRight;
+    if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
+      sum = rootOfSegment.sum;
+
+      Node maxNodeFromRight;
       if (rootOfSegment.right != null) {
-        minNodeFromRight = findMinNode(rootOfSegment.right);
-        long rightSum = countSubTreeSum(l, r, rootOfSegment, minNodeFromRight);
-        sum = (sum + rightSum) % MOD;
+        maxNodeFromRight = findMaxNode(rootOfSegment.right, l, r);
+        if (maxNodeFromRight.val > r)
+          sum = (sum - nodeSum(maxNodeFromRight)) % MOD;
       }
 
-      if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
-        sum = (sum + rootOfSegment.val) % MOD;
+      Node minNodeFromLeft;
+      if (rootOfSegment.left != null) {
+        minNodeFromLeft = findMinNode(rootOfSegment.left, l, r);
+        if (minNodeFromLeft.val < l)
+          sum = (sum - nodeSum(minNodeFromLeft)) % MOD;
       }
     }
     s = sum;
@@ -146,7 +145,6 @@ public class RequestSumOnSegment {
   }
 
   // ==========================================
-
 
   private static long countSubTreeSum(long l, long r, Node rootOfSegment, Node startNode) {
     Node current = startNode;
@@ -221,8 +219,22 @@ public class RequestSumOnSegment {
     return initialNode;
   }
 
+  private static Node findMinNode(Node initialNode, long l, long r) {
+    while (initialNode.left != null && l <= initialNode.val && initialNode.val <= r) {
+      initialNode = initialNode.left;
+    }
+    return initialNode;
+  }
+
   private static Node findMaxNode(Node initialNode) {
     while (initialNode.right != null) {
+      initialNode = initialNode.right;
+    }
+    return initialNode;
+  }
+
+  private static Node findMaxNode(Node initialNode, long l, long r) {
+    while (initialNode.right != null && l <= initialNode.val && initialNode.val <= r) {
       initialNode = initialNode.right;
     }
     return initialNode;
@@ -237,6 +249,7 @@ public class RequestSumOnSegment {
   private static void balance(Node n) {
     while (n != null) {
       fixHeight(n);
+      fixSum(n);
       int balance = bFactor(n);
       if (balance == 2) {
         if (bFactor(n.right) < 0)
@@ -266,6 +279,8 @@ public class RequestSumOnSegment {
     n.parent = r;
     fixHeight(n);
     fixHeight(r);
+    fixSum(n);
+    fixSum(r);
     return r;
   }
 
@@ -282,6 +297,8 @@ public class RequestSumOnSegment {
     n.parent = l;
     fixHeight(n);
     fixHeight(l);
+    fixSum(n);
+    fixSum(l);
     return l;
   }
 
@@ -291,8 +308,18 @@ public class RequestSumOnSegment {
     n.h = ((hl > hr) ? hl : hr) + 1;
   }
 
+  private static void fixSum(Node n) {
+    long sumL = nodeSum(n.left);
+    long sumR = nodeSum(n.right);
+    n.sum = ((n.val % MOD) + (sumL % MOD) + (sumR % MOD)) % MOD;
+  }
+
   private static int height(Node n) {
     return n != null ? n.h : 0;
+  }
+
+  private static long nodeSum(Node n) {
+    return n != null ? n.sum : 0;
   }
 
   private static int bFactor(Node n) {
@@ -302,6 +329,7 @@ public class RequestSumOnSegment {
   private static class Node {
     private long val;
     private int h;
+    private long sum;
     private Node parent;
     private Node left;
     private Node right;
@@ -310,12 +338,13 @@ public class RequestSumOnSegment {
       this.val = val;
       this.parent = parent;
       this.h = 1;
+      this.sum = val;
     }
 
     @Override
     public String toString() {
       return "val=" + val +
-              ", h=" + h;
+              ", sum=" + sum;
     }
   }
 }
