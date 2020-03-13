@@ -3,6 +3,7 @@ package stepic.baseDataStructure;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Objects;
 import java.util.StringTokenizer;
 
 public class RequestSumOnSegment {
@@ -17,12 +18,6 @@ public class RequestSumOnSegment {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
 
-//      while (true) {
-//        String req = br.readLine();
-//        if (req.startsWith("end")) break;
-//        process(req);
-//      }
-//
       for (int i = 0; i < n; i++) {
         String req = br.readLine();
         process(req);
@@ -64,18 +59,16 @@ public class RequestSumOnSegment {
     if (rootOfSegment != null && l <= rootOfSegment.val && rootOfSegment.val <= r) {
       sum = rootOfSegment.sum;
 
-      Node maxNodeFromRight;
+      Node rightEnd;
       if (rootOfSegment.right != null) {
-        maxNodeFromRight = findMaxNode(rootOfSegment.right, l, r);
-        if (maxNodeFromRight.val > r)
-          sum = (sum - nodeSum(maxNodeFromRight)) % MOD;
+        rightEnd = findRightEnd(rootOfSegment, r);
+        sum = ((sum % MOD) - subtractRightSum(rootOfSegment, rightEnd, r)) % MOD;
       }
 
-      Node minNodeFromLeft;
+      Node leftEnd;
       if (rootOfSegment.left != null) {
-        minNodeFromLeft = findMinNode(rootOfSegment.left, l, r);
-        if (minNodeFromLeft.val < l)
-          sum = (sum - nodeSum(minNodeFromLeft)) % MOD;
+        leftEnd = findLeftEnd(rootOfSegment, l);
+        sum = ((sum % MOD) - subtractLeftSum(rootOfSegment, leftEnd, l)) % MOD;
       }
     }
     s = sum;
@@ -146,13 +139,30 @@ public class RequestSumOnSegment {
 
   // ==========================================
 
-  private static long countSubTreeSum(long l, long r, Node rootOfSegment, Node startNode) {
-    Node current = startNode;
+  private static long subtractLeftSum(Node currentRoot, Node leftEnd, long l) {
+    Node current = leftEnd;
     long sum = 0;
-    while (current != null && current != rootOfSegment) {
-      long val = current.val;
-      if (l <= val && val <= r) {
-        sum = (sum + val) % MOD;
+    if (leftEnd.left != null && current.equals(currentRoot)) {
+      sum = (sum + (leftEnd.left.sum % MOD)) % MOD;
+    }
+    while (current != null && !current.equals(currentRoot)) {
+      if (current.val < l) {
+        sum = ((sum % MOD) + (current.val % MOD) + (nodeSum(current.left) % MOD)) % MOD;
+      }
+      current = current.parent;
+    }
+    return sum;
+  }
+
+  private static long subtractRightSum(Node currentRoot, Node rightEnd, long r) {
+    Node current = rightEnd;
+    long sum = 0;
+    if (rightEnd.right != null && current.equals(currentRoot)) {
+      sum = (sum + (rightEnd.right.sum % MOD)) % MOD;
+    }
+    while (current != null && !current.equals(currentRoot)) {
+      if (current.val > r) {
+        sum = ((sum % MOD) + (current.val % MOD) + (nodeSum(current.right) % MOD)) % MOD;
       }
       current = current.parent;
     }
@@ -212,6 +222,46 @@ public class RequestSumOnSegment {
     return node;
   }
 
+  private static Node findLeftEnd(Node startNode, long end) {
+    Node node = startNode;
+    if (node != null) {
+      while (end != node.val) {
+        if (node.val > end) {
+          if (node.left == null) {
+            break;
+          }
+          node = node.left;
+        } else {
+          if (node.right == null) {
+            break;
+          }
+          node = node.right;
+        }
+      }
+    }
+    return node;
+  }
+
+  private static Node findRightEnd(Node startNode, long end) {
+    Node node = startNode;
+    if (node != null) {
+      while (end != node.val) {
+        if (node.val < end) {
+          if (node.right == null) {
+            break;
+          }
+          node = node.right;
+        } else {
+          if (node.left == null) {
+            break;
+          }
+          node = node.left;
+        }
+      }
+    }
+    return node;
+  }
+
   private static Node findMinNode(Node initialNode) {
     while (initialNode.left != null) {
       initialNode = initialNode.left;
@@ -219,22 +269,8 @@ public class RequestSumOnSegment {
     return initialNode;
   }
 
-  private static Node findMinNode(Node initialNode, long l, long r) {
-    while (initialNode.left != null && l <= initialNode.val && initialNode.val <= r) {
-      initialNode = initialNode.left;
-    }
-    return initialNode;
-  }
-
   private static Node findMaxNode(Node initialNode) {
     while (initialNode.right != null) {
-      initialNode = initialNode.right;
-    }
-    return initialNode;
-  }
-
-  private static Node findMaxNode(Node initialNode, long l, long r) {
-    while (initialNode.right != null && l <= initialNode.val && initialNode.val <= r) {
       initialNode = initialNode.right;
     }
     return initialNode;
@@ -345,6 +381,20 @@ public class RequestSumOnSegment {
     public String toString() {
       return "val=" + val +
               ", sum=" + sum;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      Node node = (Node) o;
+      return val == node.val &&
+              sum == node.sum;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(val, sum);
     }
   }
 }
