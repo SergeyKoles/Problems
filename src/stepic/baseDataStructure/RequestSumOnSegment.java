@@ -62,13 +62,13 @@ public class RequestSumOnSegment {
       Node rightEnd;
       if (rootOfSegment.right != null) {
         rightEnd = findRightEnd(rootOfSegment, r);
-        sum = ((sum % MOD) - subtractRightSum(rootOfSegment, rightEnd, r)) % MOD;
+        sum -= subtractRightSum(rootOfSegment, rightEnd, r);
       }
 
       Node leftEnd;
       if (rootOfSegment.left != null) {
         leftEnd = findLeftEnd(rootOfSegment, l);
-        sum = ((sum % MOD) - subtractLeftSum(rootOfSegment, leftEnd, l)) % MOD;
+        sum -= subtractLeftSum(rootOfSegment, leftEnd, l);
       }
     }
     s = sum;
@@ -90,6 +90,7 @@ public class RequestSumOnSegment {
     }
 
     Node parent = d.parent;
+    Node nodeForSwapParent = nodeForSwap.parent;
     if (nodeForSwap.val == d.val) {
       if (parent != null) {
         setParentSon(d.val, null, parent);
@@ -100,6 +101,7 @@ public class RequestSumOnSegment {
     } else {
       if (parent != null) {
         setParentSon(d.val, nodeForSwap, parent);
+        balance(parent);
       }
       setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
       if (nodeForSwap.left == null)
@@ -113,6 +115,9 @@ public class RequestSumOnSegment {
       if (nodeForSwap.right != null)
         nodeForSwap.right.parent = nodeForSwap;
 
+      balance(nodeForSwapParent);
+      balance(nodeForSwap.left);
+      balance(nodeForSwap.right);
       balance(nodeForSwap);
     }
     d = null;
@@ -142,12 +147,12 @@ public class RequestSumOnSegment {
   private static long subtractLeftSum(Node currentRoot, Node leftEnd, long l) {
     Node current = leftEnd;
     long sum = 0;
-    if (leftEnd.left != null && current.equals(currentRoot)) {
-      sum = (sum + (leftEnd.left.sum % MOD)) % MOD;
+    if (leftEnd != null && leftEnd.val >= l) {
+      sum += nodeSum(leftEnd.left);
     }
     while (current != null && !current.equals(currentRoot)) {
       if (current.val < l) {
-        sum = ((sum % MOD) + (current.val % MOD) + (nodeSum(current.left) % MOD)) % MOD;
+        sum += current.val + nodeSum(current.left);
       }
       current = current.parent;
     }
@@ -157,12 +162,12 @@ public class RequestSumOnSegment {
   private static long subtractRightSum(Node currentRoot, Node rightEnd, long r) {
     Node current = rightEnd;
     long sum = 0;
-    if (rightEnd.right != null && current.equals(currentRoot)) {
-      sum = (sum + (rightEnd.right.sum % MOD)) % MOD;
+    if (rightEnd != null && rightEnd.val <= r) {
+      sum += nodeSum(rightEnd.right);
     }
     while (current != null && !current.equals(currentRoot)) {
       if (current.val > r) {
-        sum = ((sum % MOD) + (current.val % MOD) + (nodeSum(current.right) % MOD)) % MOD;
+        sum += current.val+ nodeSum(current.right);
       }
       current = current.parent;
     }
@@ -347,7 +352,7 @@ public class RequestSumOnSegment {
   private static void fixSum(Node n) {
     long sumL = nodeSum(n.left);
     long sumR = nodeSum(n.right);
-    n.sum = ((n.val % MOD) + (sumL % MOD) + (sumR % MOD)) % MOD;
+    n.sum = n.val + sumL+ sumR;
   }
 
   private static int height(Node n) {
