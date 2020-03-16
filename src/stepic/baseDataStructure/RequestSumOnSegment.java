@@ -1,5 +1,7 @@
 package stepic.baseDataStructure;
 
+import stepic.baseDataStructure.test.TestRequestSumOnSegment;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +16,7 @@ public class RequestSumOnSegment {
   private static long s = 0;
   private static Node root;
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
 
@@ -27,7 +29,7 @@ public class RequestSumOnSegment {
     }
   }
 
-  private static void process(String req) {
+  private static void process(String req) throws Exception {
     StringTokenizer st = new StringTokenizer(req);
     String key = st.nextToken();
 
@@ -47,11 +49,9 @@ public class RequestSumOnSegment {
     }
   }
 
-  private static void sum(String left, String right) {
-    int L = Integer.parseInt(left);
-    int R = Integer.parseInt(right);
-    long l = (L + s) % MOD;
-    long r = (R + s) % MOD;
+  private static void sum(String left, String right) throws Exception {
+    long l = getFi(left);
+    long r = getFi(right);
 
     Node rootOfSegment = findRootOfSegment(l, r);
     long sum = 0;
@@ -71,15 +71,21 @@ public class RequestSumOnSegment {
         sum -= subtractLeftSum(rootOfSegment, leftEnd, l);
       }
     }
+
+    long testSum = TestRequestSumOnSegment.sum(l, r);
+    if (testSum != sum){
+      throw new Exception(l + ", " + r + " test sum: " + testSum + ", sum: " + sum);
+    }
     s = sum;
     System.out.println(sum);
   }
 
   private static void delete(String value) {
-    int val = Integer.parseInt(value);
-    long fi = (val + s) % MOD;
+    long fi = getFi(value);
     Node d = findNode(fi);
     if (d == null) return;
+
+    TestRequestSumOnSegment.delete(fi);
 
     Node nodeForSwap = d;
 
@@ -123,17 +129,25 @@ public class RequestSumOnSegment {
     d = null;
   }
 
-  private static void find(String value) {
-    int val = Integer.parseInt(value);
-    long fi = (val + s) % MOD;
+  private static void find(String value) throws Exception {
+    long fi = getFi(value);
+
+    String test = TestRequestSumOnSegment.find(fi);
+    String result = "";
     if (root == null || findNode(fi) == null)
-      System.out.println(NOT_FOUND);
-    else System.out.println(FOUND);
+      result = NOT_FOUND;
+    else result = FOUND;
+    if (!test.equals(result)){
+      throw new Exception(value + " test result: " + test + ", result: " + result);
+    }
+    System.out.println(result);
   }
 
   private static void add(String value) {
-    int val = Integer.parseInt(value);
-    long fi = (val + s) % MOD;
+    long fi = getFi(value);
+
+    TestRequestSumOnSegment.add(fi);
+
     if (root == null) {
       root = new Node(fi, null);
     } else {
@@ -143,6 +157,11 @@ public class RequestSumOnSegment {
   }
 
   // ==========================================
+
+  private static long getFi(String value) {
+    long val = Integer.parseInt(value);
+    return (val + s) % MOD;
+  }
 
   private static long subtractLeftSum(Node currentRoot, Node leftEnd, long l) {
     Node current = leftEnd;
