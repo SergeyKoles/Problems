@@ -73,19 +73,20 @@ public class RequestSumOnSegment {
     }
 
     long testSum = TestRequestSumOnSegment.sum(l, r);
-    if (testSum != sum){
-      throw new Exception(l + ", " + r + " test sum: " + testSum + ", sum: " + sum);
+    if (testSum != sum) {
+      TestRequestSumOnSegment.sum(l, r);
+      throw new Exception("left: " + left + ", right: " + right + " test sum: " + testSum + ", sum: " + sum);
     }
     s = sum;
     System.out.println(sum);
   }
 
-  private static void delete(String value) {
+  private static void delete(String value) throws Exception {
     long fi = getFi(value);
     Node d = findNode(fi);
     if (d == null) return;
 
-    TestRequestSumOnSegment.delete(fi);
+
 
     Node nodeForSwap = d;
 
@@ -126,7 +127,15 @@ public class RequestSumOnSegment {
       balance(nodeForSwap.right);
       balance(nodeForSwap);
     }
-    d = null;
+//    setParentSon(d.val, null, d.parent);
+
+
+    TestRequestSumOnSegment.delete(fi);
+    String test = TestRequestSumOnSegment.print();
+    String res = inOrder(root, new StringBuilder());
+    if (!test.equals(res)){
+      throw new Exception("val: " + value + " test: " + test + ", resukt: " + res);
+    }
   }
 
   private static void find(String value) throws Exception {
@@ -137,7 +146,7 @@ public class RequestSumOnSegment {
     if (root == null || findNode(fi) == null)
       result = NOT_FOUND;
     else result = FOUND;
-    if (!test.equals(result)){
+    if (!test.equals(result)) {
       throw new Exception(value + " test result: " + test + ", result: " + result);
     }
     System.out.println(result);
@@ -156,11 +165,22 @@ public class RequestSumOnSegment {
     }
   }
 
+  public static String inOrder(Node v, StringBuilder sb) {
+    if (v.left != null) {
+      inOrder(v.left, sb);
+    }
+    sb.append(v.val).append(" ");
+    if (v.right != null) {
+      inOrder(v.right, sb);
+    }
+    return sb.toString().trim();
+  }
+
   // ==========================================
 
   private static long getFi(String value) {
     long val = Integer.parseInt(value);
-    return (val + s) % MOD;
+    return (val + (s % MOD)) % MOD;
   }
 
   private static long subtractLeftSum(Node currentRoot, Node leftEnd, long l) {
@@ -186,7 +206,7 @@ public class RequestSumOnSegment {
     }
     while (current != null && !current.equals(currentRoot)) {
       if (current.val > r) {
-        sum += current.val+ nodeSum(current.right);
+        sum += current.val + nodeSum(current.right);
       }
       current = current.parent;
     }
@@ -371,7 +391,7 @@ public class RequestSumOnSegment {
   private static void fixSum(Node n) {
     long sumL = nodeSum(n.left);
     long sumR = nodeSum(n.right);
-    n.sum = n.val + sumL+ sumR;
+    n.sum = n.val + sumL + sumR;
   }
 
   private static int height(Node n) {

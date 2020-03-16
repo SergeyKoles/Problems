@@ -2,6 +2,8 @@ package stepic.baseDataStructure.test;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TestRequestSumOnSegment {
 
@@ -36,5 +38,9 @@ public class TestRequestSumOnSegment {
       }
     }
     return sum;
+  }
+
+  public static String print() {
+    return list.stream().map(Object::toString).collect(Collectors.joining(" "));
   }
 }
