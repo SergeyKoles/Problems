@@ -8,15 +8,18 @@ import java.util.stream.Collectors;
 public class TestRequestSumOnSegment {
 
   private static ArrayList<Long> list = new ArrayList<>();
+  public static String addingOrder = "";
 
   public static void add(long value) {
     if (!list.contains(value)) {
+      addingOrder += " +" + value;
       list.add(value);
       Collections.sort(list);
     }
   }
 
   public static void delete(long value) {
+    addingOrder += " -" + value;
     list.remove(value);
   }
 

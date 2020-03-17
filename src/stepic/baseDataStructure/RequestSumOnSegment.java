@@ -33,17 +33,30 @@ public class RequestSumOnSegment {
     StringTokenizer st = new StringTokenizer(req);
     String key = st.nextToken();
 
+    String val = "";
+
     switch (key) {
       case "+":
-        add(st.nextToken());
+        val = st.nextToken();
+        System.out.println(key + " " + val);
+//        add(st.nextToken());
+        add(val);
         break;
       case "-":
-        delete(st.nextToken());
+        val = st.nextToken();
+        System.out.println(key + " " + val);
+//        delete(st.nextToken());
+        delete(val);
         break;
       case "?":
-        find(st.nextToken());
+        val = st.nextToken();
+        System.out.println(key + " " + val);
+//        find(st.nextToken());
+        find(val);
         break;
       case "s":
+
+        System.out.println(key);
         sum(st.nextToken(), st.nextToken());
         break;
     }
@@ -85,10 +98,13 @@ public class RequestSumOnSegment {
     long fi = getFi(value);
     Node d = findNode(fi);
     if (d == null) return;
-
-
-
+//    String testBefore = TestRequestSumOnSegment.print();
+//    String resBefore = inOrder(root, new StringBuilder());
     Node nodeForSwap = d;
+
+    if (fi == 779397480) {
+      System.out.println();
+    }
 
     if (d.left != null) {
       nodeForSwap = findMaxNode(d.left);
@@ -97,7 +113,6 @@ public class RequestSumOnSegment {
     }
 
     Node parent = d.parent;
-    Node nodeForSwapParent = nodeForSwap.parent;
     if (nodeForSwap.val == d.val) {
       if (parent != null) {
         setParentSon(d.val, null, parent);
@@ -110,11 +125,26 @@ public class RequestSumOnSegment {
         setParentSon(d.val, nodeForSwap, parent);
         balance(parent);
       }
-      setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
-      if (nodeForSwap.left == null)
-        nodeForSwap.left = d.left;
-      if (nodeForSwap.right == null)
-        nodeForSwap.right = d.right;
+
+      if (nodeForSwap.left != null) {
+        nodeForSwap.parent.right = nodeForSwap.left;
+        nodeForSwap.left.parent = nodeForSwap.parent;
+      }
+      else if (nodeForSwap.right != null){
+        nodeForSwap.parent.left = nodeForSwap.right;
+        nodeForSwap.right.parent = nodeForSwap.parent;
+      }
+      else
+        setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
+
+//      if (nodeForSwap.left == null)
+      nodeForSwap.left = d.left;
+
+
+//      if (nodeForSwap.right == null)
+      nodeForSwap.right = d.right;
+
+
       nodeForSwap.parent = d.parent;
 
       if (nodeForSwap.left != null)
@@ -122,19 +152,20 @@ public class RequestSumOnSegment {
       if (nodeForSwap.right != null)
         nodeForSwap.right.parent = nodeForSwap;
 
-      balance(nodeForSwapParent);
       balance(nodeForSwap.left);
       balance(nodeForSwap.right);
       balance(nodeForSwap);
+      balance(nodeForSwap.parent);
     }
 //    setParentSon(d.val, null, d.parent);
-
 
     TestRequestSumOnSegment.delete(fi);
     String test = TestRequestSumOnSegment.print();
     String res = inOrder(root, new StringBuilder());
-    if (!test.equals(res)){
-      throw new Exception("val: " + value + " test: " + test + ", resukt: " + res);
+    if (!test.equals(res)) {
+//      String before = "\nbefore delete: \n  test: " + testBefore + "\nresult: " + resBefore;
+//      String after = "\n after delete: \n  test: " + test + "\nresult: " + res;
+//      throw new Exception("\n\nadding order: " + TestRequestSumOnSegment.addingOrder + "\n\n\ndelete: " + "val: " + value + ", fi: " + fi + before + after + "\n\n\n");
     }
   }
 
@@ -147,12 +178,12 @@ public class RequestSumOnSegment {
       result = NOT_FOUND;
     else result = FOUND;
     if (!test.equals(result)) {
-      throw new Exception(value + " test result: " + test + ", result: " + result);
+      throw new Exception("\nfind: " + value + "\ntest result: " + test + ",\n result: " + result);
     }
     System.out.println(result);
   }
 
-  private static void add(String value) {
+  private static void add(String value) throws Exception {
     long fi = getFi(value);
 
     TestRequestSumOnSegment.add(fi);
@@ -162,6 +193,12 @@ public class RequestSumOnSegment {
     } else {
       Node node = createNode(fi);
       balance(node.parent);
+    }
+
+    String test = TestRequestSumOnSegment.print();
+    String res = inOrder(root, new StringBuilder());
+    if (!test.equals(res)) {
+      throw new Exception("\nadd: " + "val: " + value + "\n   test: " + test + ",\n result: " + res);
     }
   }
 
