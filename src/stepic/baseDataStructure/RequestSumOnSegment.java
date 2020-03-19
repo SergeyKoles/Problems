@@ -1,7 +1,5 @@
 package stepic.baseDataStructure;
 
-import stepic.baseDataStructure.test.TestRequestSumOnSegment;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,7 +14,7 @@ public class RequestSumOnSegment {
   private static long s = 0;
   private static Node root;
 
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
       int n = Integer.parseInt(br.readLine());
 
@@ -29,7 +27,7 @@ public class RequestSumOnSegment {
     }
   }
 
-  private static void process(String req) throws Exception {
+  private static void process(String req) {
     StringTokenizer st = new StringTokenizer(req);
     String key = st.nextToken();
 
@@ -37,32 +35,21 @@ public class RequestSumOnSegment {
 
     switch (key) {
       case "+":
-        val = st.nextToken();
-        System.out.println(key + " " + val);
-//        add(st.nextToken());
-        add(val);
+        add(st.nextToken());
         break;
       case "-":
-        val = st.nextToken();
-        System.out.println(key + " " + val);
-//        delete(st.nextToken());
-        delete(val);
+        delete(st.nextToken());
         break;
       case "?":
-        val = st.nextToken();
-        System.out.println(key + " " + val);
-//        find(st.nextToken());
-        find(val);
+        find(st.nextToken());
         break;
       case "s":
-
-        System.out.println(key);
         sum(st.nextToken(), st.nextToken());
         break;
     }
   }
 
-  private static void sum(String left, String right) throws Exception {
+  private static void sum(String left, String right) {
     long l = getFi(left);
     long r = getFi(right);
 
@@ -84,27 +71,15 @@ public class RequestSumOnSegment {
         sum -= subtractLeftSum(rootOfSegment, leftEnd, l);
       }
     }
-
-    long testSum = TestRequestSumOnSegment.sum(l, r);
-    if (testSum != sum) {
-      TestRequestSumOnSegment.sum(l, r);
-      throw new Exception("left: " + left + ", right: " + right + " test sum: " + testSum + ", sum: " + sum);
-    }
     s = sum;
     System.out.println(sum);
   }
 
-  private static void delete(String value) throws Exception {
+  private static void delete(String value) {
     long fi = getFi(value);
     Node d = findNode(fi);
     if (d == null) return;
-//    String testBefore = TestRequestSumOnSegment.print();
-//    String resBefore = inOrder(root, new StringBuilder());
     Node nodeForSwap = d;
-
-    if (fi == 779397480) {
-      System.out.println();
-    }
 
     if (d.left != null) {
       nodeForSwap = findMaxNode(d.left);
@@ -121,96 +96,58 @@ public class RequestSumOnSegment {
         root = null;
       }
     } else {
-      if (parent != null) {
-        setParentSon(d.val, nodeForSwap, parent);
-        balance(parent);
+      d.val = nodeForSwap.val;
+
+      if (!nodeForSwap.parent.equals(d)) {
+        if (nodeForSwap.left != null) {
+          nodeForSwap.parent.right = nodeForSwap.left;
+          nodeForSwap.left.parent = nodeForSwap.parent;
+          nodeForSwap.left = null;
+        } else if (nodeForSwap.right != null) {
+          nodeForSwap.parent.left = nodeForSwap.right;
+          nodeForSwap.right.parent = nodeForSwap.parent;
+          nodeForSwap.right = null;
+        } else if (nodeForSwap.parent != null) {
+          setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
+          balance(nodeForSwap.parent);
+          nodeForSwap.parent = null;
+        }
+      } else {
+        if (nodeForSwap.left != null) {
+          d.left = nodeForSwap.left;
+          nodeForSwap.left.parent = d;
+        } else if (nodeForSwap.right != null) {
+          d.right = nodeForSwap.right;
+          nodeForSwap.right.parent = d;
+        } else {
+          setParentSon(nodeForSwap.val, null, d);
+        }
       }
-
-      if (nodeForSwap.left != null) {
-        nodeForSwap.parent.right = nodeForSwap.left;
-        nodeForSwap.left.parent = nodeForSwap.parent;
-      }
-      else if (nodeForSwap.right != null){
-        nodeForSwap.parent.left = nodeForSwap.right;
-        nodeForSwap.right.parent = nodeForSwap.parent;
-      }
-      else
-        setParentSon(nodeForSwap.val, null, nodeForSwap.parent);
-
-//      if (nodeForSwap.left == null)
-      nodeForSwap.left = d.left;
-
-
-//      if (nodeForSwap.right == null)
-      nodeForSwap.right = d.right;
-
-
-      nodeForSwap.parent = d.parent;
-
-      if (nodeForSwap.left != null)
-        nodeForSwap.left.parent = nodeForSwap;
-      if (nodeForSwap.right != null)
-        nodeForSwap.right.parent = nodeForSwap;
-
-      balance(nodeForSwap.left);
-      balance(nodeForSwap.right);
-      balance(nodeForSwap);
-      balance(nodeForSwap.parent);
-    }
-//    setParentSon(d.val, null, d.parent);
-
-    TestRequestSumOnSegment.delete(fi);
-    String test = TestRequestSumOnSegment.print();
-    String res = inOrder(root, new StringBuilder());
-    if (!test.equals(res)) {
-//      String before = "\nbefore delete: \n  test: " + testBefore + "\nresult: " + resBefore;
-//      String after = "\n after delete: \n  test: " + test + "\nresult: " + res;
-//      throw new Exception("\n\nadding order: " + TestRequestSumOnSegment.addingOrder + "\n\n\ndelete: " + "val: " + value + ", fi: " + fi + before + after + "\n\n\n");
+      balance(d.left);
+      balance(d.right);
+      balance(d);
     }
   }
 
-  private static void find(String value) throws Exception {
+  private static void find(String value) {
     long fi = getFi(value);
 
-    String test = TestRequestSumOnSegment.find(fi);
     String result = "";
     if (root == null || findNode(fi) == null)
       result = NOT_FOUND;
     else result = FOUND;
-    if (!test.equals(result)) {
-      throw new Exception("\nfind: " + value + "\ntest result: " + test + ",\n result: " + result);
-    }
     System.out.println(result);
   }
 
-  private static void add(String value) throws Exception {
+  private static void add(String value) {
     long fi = getFi(value);
-
-    TestRequestSumOnSegment.add(fi);
 
     if (root == null) {
       root = new Node(fi, null);
-    } else {
+    } else if (findNode(fi) == null) {
       Node node = createNode(fi);
       balance(node.parent);
     }
-
-    String test = TestRequestSumOnSegment.print();
-    String res = inOrder(root, new StringBuilder());
-    if (!test.equals(res)) {
-      throw new Exception("\nadd: " + "val: " + value + "\n   test: " + test + ",\n result: " + res);
-    }
-  }
-
-  public static String inOrder(Node v, StringBuilder sb) {
-    if (v.left != null) {
-      inOrder(v.left, sb);
-    }
-    sb.append(v.val).append(" ");
-    if (v.right != null) {
-      inOrder(v.right, sb);
-    }
-    return sb.toString().trim();
   }
 
   // ==========================================
